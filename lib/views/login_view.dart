@@ -93,24 +93,29 @@ class _LoginViewState extends State<LoginView> {
                                 email: email, password: password);
                         print(userCredential);
                       } on FirebaseAuthException catch (e) {
+                        String errorMessage;
+                        switch (e.code) {
+                          case 'invalid-email':
+                            errorMessage = 'The email address is not valid.';
+                            break;
+                          case 'user-disabled':
+                            errorMessage = 'The user has been disabled.';
+                            break;
+                          case 'user-not-found':
+                            errorMessage = 'No user found with this email.';
+                            break;
+                          case 'wrong-password':
+                            errorMessage = 'Incorrect password.';
+                            break;
+                          default:
+                            errorMessage = 'An unknown error occurred.';
+                        }
                         print("Registration Error: $e");
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text("Error"),
-                              content: Text(e.code),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text("OK"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(errorMessage),
+                          duration: Duration(seconds: 2),
+                          backgroundColor: Colors.red,
+                        ));
                       }
                     },
                     child: const Text("Login"),

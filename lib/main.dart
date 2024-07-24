@@ -19,7 +19,7 @@ void main() async {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 163, 5, 5)),
         useMaterial3: true,
       ),
-      home: const LoginView(),
+      home: const RegisterView(),
     ),
   );
 }
@@ -116,24 +116,31 @@ class _RegisterViewState extends State<RegisterView> {
                                 email: email, password: password);
                         print(userCredential);
                       } on FirebaseException catch (e) {
+                        String errorMessage;
+                        switch (e.code) {
+                          case 'email-already-in-use':
+                            errorMessage =
+                                'The email address is already in use.';
+                            break;
+                          case 'invalid-email':
+                            errorMessage = 'The email address is not valid.';
+                            break;
+                          case 'operation-not-allowed':
+                            errorMessage =
+                                'Email/password accounts are not enabled.';
+                            break;
+                          case 'weak-password':
+                            errorMessage = 'The password is too weak.';
+                            break;
+                          default:
+                            errorMessage = 'An unknown error occurred.';
+                        }
                         print("Registration Error: $e");
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text("Error"),
-                              content: Text(e.toString()),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text("OK"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(errorMessage),
+                          duration: Duration(seconds: 2),
+                          backgroundColor: Colors.red,
+                        ));
                       }
                     },
                     child: const Text("Register"),

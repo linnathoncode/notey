@@ -19,7 +19,7 @@ void main() async {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 163, 5, 5)),
         useMaterial3: true,
       ),
-      home: const RegisterView(),
+      home: const LoginView(),
     ),
   );
 }
@@ -115,6 +115,17 @@ class _RegisterViewState extends State<RegisterView> {
                             .createUserWithEmailAndPassword(
                                 email: email, password: password);
                         print(userCredential);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Center(
+                              child: Text(
+                                  "Registered with ${userCredential.user?.email}",
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.green,
+                          ));
+                        }
                       } on FirebaseException catch (e) {
                         String errorMessage;
                         switch (e.code) {

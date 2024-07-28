@@ -91,6 +91,17 @@ class _LoginViewState extends State<LoginView> {
                         final userCredential = await FirebaseAuth.instance
                             .signInWithEmailAndPassword(
                                 email: email, password: password);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Center(
+                              child: Text(
+                                  "Logged in as ${userCredential.user?.email}",
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.green,
+                          ));
+                        }
                         print(userCredential);
                       } on FirebaseAuthException catch (e) {
                         String errorMessage;

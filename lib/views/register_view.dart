@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -30,8 +30,8 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: const Text("Login")),
-        backgroundColor: Color.fromARGB(255, 210, 68, 55),
+        title: Center(child: const Text("Register")),
+        backgroundColor: Color.fromARGB(255, 7, 5, 71),
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -89,38 +89,37 @@ class _LoginViewState extends State<LoginView> {
                       final password = _password.text;
                       try {
                         final userCredential = await FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
+                            .createUserWithEmailAndPassword(
                                 email: email, password: password);
+                        print(userCredential);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Center(
                               child: Text(
-                                  "Logged in as ${userCredential.user?.email}",
+                                  "Registered with ${userCredential.user?.email}",
                                   style: TextStyle(color: Colors.white)),
                             ),
                             duration: Duration(seconds: 2),
                             backgroundColor: Colors.green,
                           ));
                         }
-                        print(userCredential);
-                      } on FirebaseAuthException catch (e) {
+                      } on FirebaseException catch (e) {
                         String errorMessage;
-                        print(e.code);
                         switch (e.code) {
+                          case 'email-already-in-use':
+                            errorMessage =
+                                'The email address is already in use.';
+                            break;
                           case 'invalid-email':
                             errorMessage = 'The email address is not valid.';
                             break;
-                          case 'user-disabled':
-                            errorMessage = 'The user has been disabled.';
+                          case 'operation-not-allowed':
+                            errorMessage =
+                                'Email/password accounts are not enabled.';
                             break;
-                          case 'user-not-found':
-                            errorMessage = 'No user found with this email.';
+                          case 'weak-password':
+                            errorMessage = 'The password is too weak.';
                             break;
-                          case 'wrong-password':
-                            errorMessage = 'Incorrect password.';
-                            break;
-                          case 'invalid-credential':
-                            errorMessage = 'Invalid credential.';
                           default:
                             errorMessage = 'An unknown error occurred.';
                         }
@@ -137,7 +136,7 @@ class _LoginViewState extends State<LoginView> {
                         }
                       }
                     },
-                    child: const Text("Login"),
+                    child: const Text("Register"),
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(
                             top: 15, bottom: 15, left: 30, right: 30),

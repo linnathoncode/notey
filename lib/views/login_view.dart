@@ -28,43 +28,45 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Material(
-            elevation: 7.0,
-            shadowColor: Color.fromARGB(75, 255, 0, 0),
-            child: TextField(
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              controller: _email,
-              decoration: const InputDecoration(
-                  hintText: "Enter your e-mail",
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                  border: OutlineInputBorder()),
+    return Scaffold(
+      appBar: AppBar(title: Center(child: Text('Login'))),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Material(
+              elevation: 7.0,
+              shadowColor: Color.fromARGB(75, 255, 0, 0),
+              child: TextField(
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                controller: _email,
+                decoration: const InputDecoration(
+                    hintText: "Enter your e-mail",
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                    border: OutlineInputBorder()),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Material(
-            elevation: 7.0,
-            shadowColor: Color.fromARGB(75, 255, 0, 0),
-            child: TextField(
-                obscureText: true,
-                obscuringCharacter: "*",
-                enableSuggestions: false,
-                autocorrect: false,
-                controller: _password,
-                decoration: const InputDecoration(
-                    hintText: "Enter your password",
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                    border: OutlineInputBorder())),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Material(
+              elevation: 7.0,
+              shadowColor: Color.fromARGB(75, 255, 0, 0),
+              child: TextField(
+                  obscureText: true,
+                  obscuringCharacter: "*",
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  controller: _password,
+                  decoration: const InputDecoration(
+                      hintText: "Enter your password",
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      border: OutlineInputBorder())),
+            ),
           ),
-        ),
-        const SizedBox(height: 30),
-        ClipRRect(
+          const SizedBox(height: 30),
+          ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: Stack(
               children: <Widget>[
@@ -136,10 +138,18 @@ class _LoginViewState extends State<LoginView> {
                           top: 15, bottom: 15, left: 30, right: 30),
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(fontSize: 15)),
-                )
+                ),
               ],
-            ))
-      ],
+            ),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+              },
+              child: Text('Not registered yet?')),
+        ],
+      ),
     );
   }
 }

@@ -12,16 +12,56 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Verify email'))),
+      appBar: AppBar(
+        title: Center(
+          child: Text('Verify email'),
+        ),
+        backgroundColor: Colors.blueGrey,
+        foregroundColor: Colors.white,
+      ),
       body: Column(
         children: [
-          const Text('Verify your email address'),
-          TextButton(
-              onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                await user?.sendEmailVerification();
-              },
-              child: const Text('Send email verification'))
+          const Padding(
+            padding: EdgeInsets.only(top: 20.0),
+            child: Center(
+              child: Text(
+                'Verify your email address',
+                style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                      Colors.blueGrey,
+                      Color.fromARGB(255, 134, 170, 188)
+                    ])),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+                    await user?.sendEmailVerification();
+                  },
+                  child: const Text("Send email verification!"),
+                  style: TextButton.styleFrom(
+                      padding: const EdgeInsets.only(
+                          top: 15, bottom: 15, left: 30, right: 30),
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(fontSize: 15)),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

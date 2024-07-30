@@ -21,8 +21,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 30),
+          Image.asset('assets/email.webp', height: 250),
           const Padding(
-            padding: EdgeInsets.only(top: 20.0),
+            padding: EdgeInsets.only(top: 8.0),
             child: Center(
               child: Text(
                 'Verify your email address',

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notey/views/login_view.dart';
+import 'package:notey/views/main_page.dart';
 import 'package:notey/views/register_view.dart';
 import 'package:notey/views/verify_email_view.dart';
 
@@ -56,61 +57,6 @@ class HomePage extends StatelessWidget {
             return const CircularProgressIndicator();
         }
       },
-    );
-  }
-}
-
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  @override
-  Widget build(BuildContext context) {
-    final userName = FirebaseAuth.instance.currentUser?.email;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-            child: Text("Notey",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold))),
-        backgroundColor: const Color.fromARGB(204, 36, 50, 83),
-        foregroundColor: Colors.white,
-      ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 8),
-            child: Center(
-              child: Text(
-                'Welcome back',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.clip,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, left: 8),
-            child: Center(
-              child: Text(
-                '$userName',
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.clip,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

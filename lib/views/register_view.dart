@@ -29,14 +29,14 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text("Register"))),
+      appBar: AppBar(title: const Center(child: Text("Register"))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(10),
             child: Material(
               elevation: 7.0,
-              shadowColor: Color.fromARGB(75, 255, 0, 0),
+              shadowColor: const Color.fromARGB(75, 255, 0, 0),
               child: TextField(
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
@@ -52,7 +52,7 @@ class _RegisterViewState extends State<RegisterView> {
             padding: const EdgeInsets.all(10),
             child: Material(
               elevation: 7.0,
-              shadowColor: Color.fromARGB(75, 255, 0, 0),
+              shadowColor: const Color.fromARGB(75, 255, 0, 0),
               child: TextField(
                   obscureText: true,
                   obscuringCharacter: "*",
@@ -93,9 +93,9 @@ class _RegisterViewState extends State<RegisterView> {
                           content: Center(
                             child: Text(
                                 "Registered with ${userCredential.user?.email}",
-                                style: TextStyle(color: Colors.white)),
+                                style: const TextStyle(color: Colors.white)),
                           ),
-                          duration: Duration(seconds: 2),
+                          duration: const Duration(seconds: 2),
                           backgroundColor: Colors.green,
                         ));
                       }
@@ -130,12 +130,12 @@ class _RegisterViewState extends State<RegisterView> {
                       }
                     }
                   },
-                  child: const Text("Register"),
                   style: TextButton.styleFrom(
                       padding: const EdgeInsets.only(
                           top: 15, bottom: 15, left: 30, right: 30),
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(fontSize: 15)),
+                  child: const Text("Register"),
                 )
               ],
             ),
@@ -145,7 +145,7 @@ class _RegisterViewState extends State<RegisterView> {
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/login/', (route) => false);
               },
-              child: Text('Already registered?')),
+              child: const Text('Already registered?')),
         ],
       ),
     );

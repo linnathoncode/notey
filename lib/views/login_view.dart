@@ -29,14 +29,14 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Login'))),
+      appBar: AppBar(title: const Center(child: Text('Login'))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(10),
             child: Material(
               elevation: 7.0,
-              shadowColor: Color.fromARGB(75, 255, 0, 0),
+              shadowColor: const Color.fromARGB(75, 255, 0, 0),
               child: TextField(
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
@@ -52,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
             padding: const EdgeInsets.all(10),
             child: Material(
               elevation: 7.0,
-              shadowColor: Color.fromARGB(75, 255, 0, 0),
+              shadowColor: const Color.fromARGB(75, 255, 0, 0),
               child: TextField(
                   obscureText: true,
                   obscuringCharacter: "*",
@@ -92,9 +92,9 @@ class _LoginViewState extends State<LoginView> {
                           content: Center(
                             child: Text(
                                 "Logged in as ${userCredential.user?.email}",
-                                style: TextStyle(color: Colors.white)),
+                                style: const TextStyle(color: Colors.white)),
                           ),
-                          duration: Duration(seconds: 2),
+                          duration: const Duration(seconds: 2),
                           backgroundColor: Colors.green,
                         ));
                       }
@@ -132,12 +132,12 @@ class _LoginViewState extends State<LoginView> {
                       }
                     }
                   },
-                  child: const Text("Login"),
                   style: TextButton.styleFrom(
                       padding: const EdgeInsets.only(
                           top: 15, bottom: 15, left: 30, right: 30),
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(fontSize: 15)),
+                  child: const Text("Login"),
                 ),
               ],
             ),
@@ -147,7 +147,7 @@ class _LoginViewState extends State<LoginView> {
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/register/', (route) => false);
               },
-              child: Text('Not registered yet?')),
+              child: const Text('Not registered yet?')),
         ],
       ),
     );

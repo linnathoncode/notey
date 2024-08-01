@@ -13,7 +13,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
+        title: const Center(
           child: Text('Verify email'),
         ),
         backgroundColor: Colors.blueGrey,
@@ -54,12 +54,12 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     final user = FirebaseAuth.instance.currentUser;
                     await user?.sendEmailVerification();
                   },
-                  child: const Text("Send email verification!"),
                   style: TextButton.styleFrom(
                       padding: const EdgeInsets.only(
                           top: 15, bottom: 15, left: 30, right: 30),
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(fontSize: 15)),
+                  child: const Text("Send email verification!"),
                 ),
               ],
             ),

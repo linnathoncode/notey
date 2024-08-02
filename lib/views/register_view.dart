@@ -47,9 +47,9 @@ class _RegisterViewState extends State<RegisterView> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: const Color.fromARGB(75, 255, 0, 0),
+                        color: Color.fromARGB(75, 255, 0, 0),
                         blurRadius: 7.0,
                         offset: Offset(0, 3),
                       ),
@@ -82,9 +82,9 @@ class _RegisterViewState extends State<RegisterView> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: const Color.fromARGB(75, 255, 0, 0),
+                        color: Color.fromARGB(75, 255, 0, 0),
                         blurRadius: 7.0,
                         offset: Offset(0, 3),
                       ),
@@ -119,9 +119,9 @@ class _RegisterViewState extends State<RegisterView> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: const Color.fromARGB(75, 255, 0, 0),
+                        color: Color.fromARGB(75, 255, 0, 0),
                         blurRadius: 7.0,
                         offset: Offset(0, 3),
                       ),
@@ -194,6 +194,9 @@ class _RegisterViewState extends State<RegisterView> {
                                   backgroundColor: Colors.green,
                                 ),
                               );
+                              await Navigator.of(context)
+                                  .pushNamedAndRemoveUntil(
+                                      '/main_page/', (route) => false);
                             }
                           } on FirebaseException catch (e) {
                             String errorMessage;
@@ -234,8 +237,6 @@ class _RegisterViewState extends State<RegisterView> {
                             }
                           }
                         }
-                        await Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/main_page/', (route) => false);
                       },
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(

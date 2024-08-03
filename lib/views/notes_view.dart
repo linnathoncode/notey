@@ -9,7 +9,7 @@ class NotesView extends StatefulWidget {
   State<NotesView> createState() => _NotesViewState();
 }
 
-enum MenuAction { logout }
+enum MenuAction { logout, devmenu }
 
 class _NotesViewState extends State<NotesView> {
   @override
@@ -17,6 +17,7 @@ class _NotesViewState extends State<NotesView> {
     final userName = FirebaseAuth.instance.currentUser?.email;
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         actions: [
           PopupMenuButton<MenuAction>(
             offset: const Offset(50, 40),
@@ -32,19 +33,24 @@ class _NotesViewState extends State<NotesView> {
                     }
                   }
                   break;
+                case MenuAction.devmenu:
+                  await Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/devmenu/', (route) => false);
+                  break;
               }
             },
             itemBuilder: (context) {
               return const [
                 PopupMenuItem<MenuAction>(
-                    value: MenuAction.logout, child: Text("Log out"))
+                    value: MenuAction.logout, child: Text("Log out")),
+                PopupMenuItem<MenuAction>(
+                    value: MenuAction.devmenu, child: Text("Dev Menu"))
               ];
             },
           )
         ],
-        title: const Center(
-            child: Text("Notey",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold))),
+        title: const Text("Notey",
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
         backgroundColor: const Color.fromARGB(204, 36, 50, 83),
         foregroundColor: Colors.white,
       ),

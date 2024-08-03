@@ -97,11 +97,11 @@ class _LoginViewState extends State<LoginView> {
                           duration: const Duration(seconds: 2),
                           backgroundColor: Colors.green,
                         ));
+                        await Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/main_page/', (route) => false);
                       }
-                      print(userCredential);
                     } on FirebaseAuthException catch (e) {
                       String errorMessage;
-                      print(e.code);
                       switch (e.code) {
                         case 'invalid-email':
                           errorMessage = 'The email address is not valid.';
@@ -120,7 +120,6 @@ class _LoginViewState extends State<LoginView> {
                         default:
                           errorMessage = 'An unknown error occurred.';
                       }
-                      print("Registration Error: $e");
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Center(

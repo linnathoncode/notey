@@ -179,7 +179,6 @@ class _RegisterViewState extends State<RegisterView> {
                             final userCredential = await FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
                                     email: email, password: password);
-                            print(userCredential);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -219,7 +218,6 @@ class _RegisterViewState extends State<RegisterView> {
                               default:
                                 errorMessage = 'An unknown error occurred.';
                             }
-                            print("Registration Error: $e");
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

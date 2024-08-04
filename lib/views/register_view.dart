@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -179,6 +180,7 @@ class _RegisterViewState extends State<RegisterView> {
                             final userCredential = await FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
                                     email: email, password: password);
+                            devtools.log(userCredential.toString());
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -195,7 +197,9 @@ class _RegisterViewState extends State<RegisterView> {
                               );
                               await Navigator.of(context)
                                   .pushNamedAndRemoveUntil(
-                                      '/main_page/', (route) => false);
+                                '/verify/',
+                                (route) => false,
+                              );
                             }
                           } on FirebaseException catch (e) {
                             String errorMessage;
@@ -249,8 +253,10 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/login/', (route) => false);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/login/',
+                    (route) => false,
+                  );
                 },
                 child: const Text('Already registered?'),
               ),

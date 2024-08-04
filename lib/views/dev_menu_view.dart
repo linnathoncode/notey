@@ -29,8 +29,10 @@ class DevMenuView extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/notes/', (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/notes/',
+                        (route) => false,
+                      );
                     },
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(
@@ -58,8 +60,10 @@ class DevMenuView extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/login/', (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/login/',
+                        (route) => false,
+                      );
                     },
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(
@@ -88,7 +92,9 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/register/', (route) => false);
+                        '/register/',
+                        (route) => false,
+                      );
                     },
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(
@@ -117,7 +123,9 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/verify/', (route) => false);
+                        '/verify/',
+                        (route) => false,
+                      );
                     },
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(

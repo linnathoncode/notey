@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -28,14 +27,18 @@ class _NotesViewState extends State<NotesView> {
                   if (shouldLogout) {
                     await FirebaseAuth.instance.signOut();
                     if (context.mounted) {
-                      await Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/login/', (route) => false);
+                      await Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/login/',
+                        (route) => false,
+                      );
                     }
                   }
                   break;
                 case MenuAction.devmenu:
-                  await Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/devmenu/', (route) => false);
+                  await Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/devmenu/',
+                    (route) => false,
+                  );
                   break;
               }
             },

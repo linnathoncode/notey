@@ -27,6 +27,7 @@ void main() async {
         '/notes/': (context) => const NotesView(),
         '/devmenu/': (context) => const DevMenuView(),
         '/verify/': (context) => const VerifyEmailView(),
+        '/homepage/': (context) => const HomePage(),
       },
     ),
   );
@@ -54,8 +55,6 @@ class HomePage extends StatelessWidget {
             } else {
               return const LoginView();
             }
-
-          // return const VerifyEmailView();
           default:
             return const CircularProgressIndicator();
         }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notey/constants/routes.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -32,7 +33,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         timer.cancel();
         if (mounted) {
           Navigator.of(context).pushNamedAndRemoveUntil(
-            '/notes/',
+            notesRoute,
             (route) => false,
           );
         }

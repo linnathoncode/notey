@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notey/constants/routes.dart';
 
 class DevMenuView extends StatelessWidget {
   const DevMenuView({super.key});
@@ -30,7 +31,7 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/notes/',
+                        notesRoute,
                         (route) => false,
                       );
                     },
@@ -61,7 +62,7 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/login/',
+                        loginRoute,
                         (route) => false,
                       );
                     },
@@ -92,7 +93,7 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/register/',
+                        registerRoute,
                         (route) => false,
                       );
                     },
@@ -123,7 +124,7 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/verify/',
+                        verifyRoute,
                         (route) => false,
                       );
                     },

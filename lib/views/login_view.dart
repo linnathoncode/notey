@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notey/constants/routes.dart';
+import 'package:notey/utilities/show_error_snack_bar.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -15,6 +16,7 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _email;
   late final TextEditingController _password;
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -155,17 +157,7 @@ class _LoginViewState extends State<LoginView> {
                                           email: email, password: password);
                                   if (context.mounted) {
                                     devtools.log(userCredential.toString());
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Center(
-                                        child: Text(
-                                            "Logged in as ${userCredential.user?.email}",
-                                            style: const TextStyle(
-                                                color: Colors.white)),
-                                      ),
-                                      duration: const Duration(seconds: 2),
-                                      backgroundColor: Colors.green,
-                                    ));
+                                    showErrorSnackBar(context, errorMessage);
                                     await Navigator.of(context)
                                         .pushNamedAndRemoveUntil(
                                       notesRoute,
@@ -173,7 +165,6 @@ class _LoginViewState extends State<LoginView> {
                                     );
                                   }
                                 } on FirebaseAuthException catch (e) {
-                                  String errorMessage;
                                   switch (e.code) {
                                     case 'invalid-email':
                                       errorMessage =
@@ -196,17 +187,11 @@ class _LoginViewState extends State<LoginView> {
                                       errorMessage =
                                           'An unknown error occurred.';
                                   }
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Center(
-                                          child: Text(errorMessage,
-                                              style: const TextStyle(
-                                                  color: Colors.white))),
-                                      duration: const Duration(seconds: 2),
-                                      backgroundColor: Colors.red,
-                                    ));
-                                  }
+                                } catch (e) {
+                                  errorMessage = e.toString();
+                                }
+                                if (context.mounted) {
+                                  showErrorSnackBar(context, errorMessage);
                                 }
                               }
                             },

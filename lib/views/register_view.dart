@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notey/constants/routes.dart';
+import 'package:notey/utilities/show_error_snack_bar.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -15,6 +16,7 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _confirmPassword;
+  String errorMessage = '';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -184,19 +186,7 @@ class _RegisterViewState extends State<RegisterView> {
                                     email: email, password: password);
                             devtools.log(userCredential.toString());
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Center(
-                                    child: Text(
-                                      "Registered with ${userCredential.user?.email}",
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
+                              showErrorSnackBar(context, errorMessage);
                               await Navigator.of(context)
                                   .pushNamedAndRemoveUntil(
                                 verifyRoute,
@@ -204,7 +194,6 @@ class _RegisterViewState extends State<RegisterView> {
                               );
                             }
                           } on FirebaseException catch (e) {
-                            String errorMessage;
                             switch (e.code) {
                               case 'email-already-in-use':
                                 errorMessage =
@@ -224,21 +213,11 @@ class _RegisterViewState extends State<RegisterView> {
                               default:
                                 errorMessage = 'An unknown error occurred.';
                             }
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Center(
-                                    child: Text(
-                                      errorMessage,
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
+                          } catch (e) {
+                            errorMessage = e.toString();
+                          }
+                          if (context.mounted) {
+                            showErrorSnackBar(context, errorMessage);
                           }
                         }
                       },

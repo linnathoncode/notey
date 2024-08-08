@@ -33,7 +33,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         timer.cancel();
         if (mounted) {
           Navigator.of(context).pushNamedAndRemoveUntil(
-            notesRoute,
+            loginRoute,
             (route) => false,
           );
         }

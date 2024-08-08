@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notey/constants/routes.dart';
-import 'package:notey/utilities/show_error_snack_bar.dart';
+import 'package:notey/utilities/show_snack_bar.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -157,7 +157,8 @@ class _LoginViewState extends State<LoginView> {
                                           email: email, password: password);
                                   if (context.mounted) {
                                     devtools.log(userCredential.toString());
-                                    showErrorSnackBar(context, errorMessage);
+                                    showInformationSnackBar(context,
+                                        "Logged in as ${userCredential.user?.email}");
                                     await Navigator.of(context)
                                         .pushNamedAndRemoveUntil(
                                       notesRoute,
@@ -190,7 +191,7 @@ class _LoginViewState extends State<LoginView> {
                                 } catch (e) {
                                   errorMessage = e.toString();
                                 }
-                                if (context.mounted) {
+                                if (context.mounted && errorMessage != "") {
                                   showErrorSnackBar(context, errorMessage);
                                 }
                               }

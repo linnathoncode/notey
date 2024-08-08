@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
+import 'package:notey/utilities/show_snack_bar.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -26,7 +27,13 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
+                    final currentUser = FirebaseAuth.instance.currentUser;
+                    await currentUser?.reload();
                     await FirebaseAuth.instance.signOut();
+                    if (context.mounted) {
+                      showInformationSnackBar(
+                          context, "Logged out from ${currentUser?.email}");
+                    }
                     if (context.mounted) {
                       await Navigator.of(context).pushNamedAndRemoveUntil(
                         loginRoute,

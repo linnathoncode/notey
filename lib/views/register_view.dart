@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notey/constants/routes.dart';
-import 'package:notey/utilities/show_error_snack_bar.dart';
+import 'package:notey/utilities/show_snack_bar.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -186,7 +186,8 @@ class _RegisterViewState extends State<RegisterView> {
                                     email: email, password: password);
                             devtools.log(userCredential.toString());
                             if (context.mounted) {
-                              showErrorSnackBar(context, errorMessage);
+                              showInformationSnackBar(context,
+                                  "Registered as ${userCredential.user?.email}");
                               await Navigator.of(context)
                                   .pushNamedAndRemoveUntil(
                                 verifyRoute,
@@ -216,7 +217,7 @@ class _RegisterViewState extends State<RegisterView> {
                           } catch (e) {
                             errorMessage = e.toString();
                           }
-                          if (context.mounted) {
+                          if (context.mounted && errorMessage != "") {
                             showErrorSnackBar(context, errorMessage);
                           }
                         }

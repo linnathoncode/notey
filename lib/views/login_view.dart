@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:notey/constants/routes.dart';
+import 'package:notey/services/auth/auth_exceptions.dart';
+import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -150,47 +150,48 @@ class _LoginViewState extends State<LoginView> {
                               if (_formKey.currentState?.validate() ?? false) {
                                 final email = _email.text;
                                 final password = _password.text;
+                                final user = AuthService.firebase().currentUser;
                                 try {
-                                  final userCredential = await FirebaseAuth
-                                      .instance
-                                      .signInWithEmailAndPassword(
-                                          email: email, password: password);
-                                  if (context.mounted) {
-                                    devtools.log(userCredential.toString());
-                                    showInformationSnackBar(context,
-                                        "Logged in as ${userCredential.user?.email}");
-                                    await Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                      notesRoute,
-                                      (route) => false,
-                                    );
+                                  await AuthService.firebase()
+                                      .logIn(email: email, password: password);
+                                  if (user?.isEmailVerified ?? false) {
+                                    if (context.mounted) {
+                                      devtools.log(AuthService.firebase()
+                                          .currentUser
+                                          .toString());
+                                      showInformationSnackBar(context,
+                                          "Logged in as ${user?.email}");
+                                      await Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                        notesRoute,
+                                        (route) => false,
+                                      );
+                                    }
+                                  } else {
+                                    if (context.mounted) {
+                                      await Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                        verifyRoute,
+                                        (route) => false,
+                                      );
+                                    }
                                   }
-                                } on FirebaseAuthException catch (e) {
-                                  switch (e.code) {
-                                    case 'invalid-email':
-                                      errorMessage =
-                                          'The email address is not valid.';
-                                      break;
-                                    case 'user-disabled':
-                                      errorMessage =
-                                          'The user has been disabled.';
-                                      break;
-                                    case 'user-not-found':
-                                      errorMessage =
-                                          'No user found with this email.';
-                                      break;
-                                    case 'wrong-password':
-                                      errorMessage = 'Incorrect password.';
-                                      break;
-                                    case 'invalid-credential':
-                                      errorMessage = 'Invalid credential.';
-                                    default:
-                                      errorMessage =
-                                          'An unknown error occurred.';
-                                  }
-                                } catch (e) {
-                                  errorMessage = e.toString();
+                                } on InvalidEmailAuthException {
+                                  errorMessage =
+                                      'The email address is not valid.';
+                                } on UserDisabledAuthException {
+                                  errorMessage = 'The user has been disabled.';
+                                } on UserNotFoundAuthException {
+                                  errorMessage =
+                                      'No user found with this email.';
+                                } on WrongPasswordAuthException {
+                                  errorMessage = 'Incorrect password.';
+                                } on InvalidCredentialAuthException {
+                                  errorMessage = 'Invalid credential.';
+                                } on GenericAuthException catch (e) {
+                                  errorMessage = errorMessage = e.toString();
                                 }
+
                                 if (context.mounted && errorMessage != "") {
                                   showErrorSnackBar(context, errorMessage);
                                 }

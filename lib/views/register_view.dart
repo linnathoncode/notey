@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
+//import 'dart:developer' as devtools show log;
 import 'package:notey/constants/routes.dart';
+import 'package:notey/services/auth/auth_exceptions.dart';
+import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 
 class RegisterView extends StatefulWidget {
@@ -181,40 +181,30 @@ class _RegisterViewState extends State<RegisterView> {
                           final email = _email.text;
                           final password = _password.text;
                           try {
-                            final userCredential = await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: email, password: password);
-                            devtools.log(userCredential.toString());
+                            await AuthService.firebase()
+                                .createUser(email: email, password: password);
+                            //devtools.log(userCredential.toString());
+                            final user = AuthService.firebase().currentUser;
                             if (context.mounted) {
-                              showInformationSnackBar(context,
-                                  "Registered as ${userCredential.user?.email}");
+                              showInformationSnackBar(
+                                  context, "Registered as ${user?.email}");
                               await Navigator.of(context)
                                   .pushNamedAndRemoveUntil(
                                 verifyRoute,
                                 (route) => false,
                               );
                             }
-                          } on FirebaseException catch (e) {
-                            switch (e.code) {
-                              case 'email-already-in-use':
-                                errorMessage =
-                                    'The email address is already in use.';
-                                break;
-                              case 'invalid-email':
-                                errorMessage =
-                                    'The email address is not valid.';
-                                break;
-                              case 'operation-not-allowed':
-                                errorMessage =
-                                    'Email/password accounts are not enabled.';
-                                break;
-                              case 'weak-password':
-                                errorMessage = 'The password is too weak.';
-                                break;
-                              default:
-                                errorMessage = 'An unknown error occurred.';
-                            }
-                          } catch (e) {
+                          } on EmailAlreadyInuserAuthException {
+                            errorMessage =
+                                'The email address is already in use.';
+                          } on InvalidEmailAuthException {
+                            errorMessage = 'The email address is not valid.';
+                          } on OperationNotAllowedAuthException {
+                            errorMessage =
+                                'Email/password accounts are not enabled.';
+                          } on WeakPasswordAuthException {
+                            errorMessage = 'The password is too weak.';
+                          } on GenericAuthException catch (e) {
                             errorMessage = e.toString();
                           }
                           if (context.mounted && errorMessage != "") {

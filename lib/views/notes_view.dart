@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
+import 'package:notey/enums/menu_action.dart';
+import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 
 class NotesView extends StatefulWidget {
@@ -10,12 +11,10 @@ class NotesView extends StatefulWidget {
   State<NotesView> createState() => _NotesViewState();
 }
 
-enum MenuAction { logout, devmenu }
-
 class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
-    final userName = FirebaseAuth.instance.currentUser?.email;
+    final user = AuthService.firebase().currentUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -27,12 +26,12 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
-                    final currentUser = FirebaseAuth.instance.currentUser;
-                    await currentUser?.reload();
-                    await FirebaseAuth.instance.signOut();
+                    final user = AuthService.firebase().currentUser;
+                    await AuthService.firebase().reload();
+                    await AuthService.firebase().logOut();
                     if (context.mounted) {
                       showInformationSnackBar(
-                          context, "Logged out from ${currentUser?.email}");
+                          context, "Logged out from ${user?.email}");
                     }
                     if (context.mounted) {
                       await Navigator.of(context).pushNamedAndRemoveUntil(
@@ -85,7 +84,7 @@ class _NotesViewState extends State<NotesView> {
             padding: const EdgeInsets.only(top: 0.0, left: 8),
             child: Center(
               child: Text(
-                '$userName',
+                '${user?.email}',
                 style: const TextStyle(
                   color: Colors.black54,
                   fontSize: 28,

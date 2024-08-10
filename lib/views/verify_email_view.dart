@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
+import 'package:notey/services/auth/auth_service.dart';
+import 'package:notey/utilities/show_snack_bar.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -27,11 +28,13 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
 
   void _startEmailVerificationCheck() {
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      final user = FirebaseAuth.instance.currentUser;
-      await user?.reload();
-      if (user?.emailVerified ?? false) {
+      final user = AuthService.firebase().currentUser;
+      await AuthService.firebase().reload();
+      if (user?.isEmailVerified ?? false) {
         timer.cancel();
         if (mounted) {
+          showInformationSnackBar(
+              context, "Your email has been verified, you can now log in.");
           Navigator.of(context).pushNamedAndRemoveUntil(
             loginRoute,
             (route) => false,
@@ -88,8 +91,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                   ),
                   TextButton(
                     onPressed: () async {
-                      final user = FirebaseAuth.instance.currentUser;
-                      await user?.sendEmailVerification();
+                      await AuthService.firebase().sendEmailVerification();
                     },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.only(

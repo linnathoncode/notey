@@ -17,6 +17,7 @@ class AuthService implements AuthProvider {
         email: email,
         password: password,
       );
+
   @override
   AuthUser? get currentUser => provider.currentUser;
 

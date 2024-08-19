@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
+import 'package:notey/services/crud/notes_service.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 
 class NotesView extends StatefulWidget {
@@ -12,9 +13,24 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  late final NotesService _notesService;
+  final user = AuthService.firebase().currentUser;
+  String get userEmail => user!.email!;
+
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = AuthService.firebase().currentUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -64,37 +80,26 @@ class _NotesViewState extends State<NotesView> {
         backgroundColor: const Color.fromARGB(204, 36, 50, 83),
         foregroundColor: Colors.white,
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 8),
-            child: Center(
-              child: Text(
-                'Welcome back',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.clip,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 0.0, left: 8),
-            child: Center(
-              child: Text(
-                '${user?.email}',
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  overflow: TextOverflow.clip,
-                ),
-              ),
-            ),
-          ),
-        ],
+      body: FutureBuilder(
+        future: _notesService.getOrCreateUser(email: userEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return StreamBuilder(
+                stream: _notesService.allNotes,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text('Waiting for all notes');
+                    default:
+                      return const CircularProgressIndicator();
+                  }
+                },
+              );
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'dart:developer' as devtools show log;
+// import 'dart:developer' as devtools show log;
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_exceptions.dart';
 import 'package:notey/services/auth/auth_service.dart';
@@ -183,7 +183,7 @@ class _RegisterViewState extends State<RegisterView> {
                           try {
                             await AuthService.firebase()
                                 .createUser(email: email, password: password);
-                            //devtools.log(userCredential.toString());
+                            // devtools.log(userCredential.toString());
                             final user = AuthService.firebase().currentUser;
                             if (context.mounted) {
                               showInformationSnackBar(

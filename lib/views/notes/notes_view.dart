@@ -4,6 +4,7 @@ import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/crud/notes_service.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
+import 'dart:developer' as devtools show log;
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -21,12 +22,6 @@ class _NotesViewState extends State<NotesView> {
   void initState() {
     _notesService = NotesService();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
   }
 
   @override
@@ -58,10 +53,7 @@ class _NotesViewState extends State<NotesView> {
                   }
                   break;
                 case MenuAction.devmenu:
-                  await Navigator.of(context).pushNamedAndRemoveUntil(
-                    devmenuRoute,
-                    (route) => false,
-                  );
+                  await Navigator.of(context).pushNamed(devmenuRoute);
                   break;
               }
             },
@@ -77,7 +69,7 @@ class _NotesViewState extends State<NotesView> {
         ],
         title: const Text("Notey",
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(204, 36, 50, 83),
+        backgroundColor: Colors.yellow.shade800,
         foregroundColor: Colors.white,
       ),
       body: FutureBuilder(
@@ -90,7 +82,51 @@ class _NotesViewState extends State<NotesView> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return const Text('Waiting for all notes');
+                    case ConnectionState.active:
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        devtools.log(allNotes.toString());
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            //biggest index to smallest index
+                            final note = allNotes[allNotes.length - 1 - index];
+                            return Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.yellow.shade800,
+                                        blurRadius: 7.0,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      note.text,
+                                      maxLines: 1,
+                                      softWrap: true,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    tileColor: Colors.yellow[50],
+                                  ),
+                                ),
+                                const SizedBox(
+                                    height: 8), // Add space between ListTiles
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }
@@ -100,6 +136,17 @@ class _NotesViewState extends State<NotesView> {
               return const CircularProgressIndicator();
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.of(context).pushNamed(newNoteRoute);
+        },
+        backgroundColor: Colors.yellow[800],
+        foregroundColor: Colors.white,
+        child: const Icon(
+          Icons.add,
+          size: 35,
+        ),
       ),
     );
   }

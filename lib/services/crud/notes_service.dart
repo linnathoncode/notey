@@ -4,6 +4,7 @@ import 'package:notey/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
+// import 'dart:developer' as devtools show log;
 
 class NotesService {
   Database? _db;
@@ -12,13 +13,18 @@ class NotesService {
 
   //singleton
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController =
+        StreamController<List<DatabaseNote>>.broadcast(onListen: () {
+      _notesStreamController.sink.add(_notes);
+    });
+  }
+
   factory NotesService() => _shared;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
     try {
@@ -89,25 +95,31 @@ class NotesService {
     return note;
   }
 
-  Future<DatabaseNote> updateNote(
-      {required DatabaseNote note, required String text}) async {
+  Future<DatabaseNote> updateNote({
+    required DatabaseNote note,
+    required String text,
+  }) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    await getNote(id: note.id);
-    final updatesCount = await db.update(noteTable, {
-      textColumn: text,
-    });
 
-    if (updatesCount == 0) {
-      throw CouldNotUpdateNoteException();
-    } else {
-      final updatedNote = await getNote(id: note.id);
-      //update local cache
-      _notes.removeWhere((note) => note.id == updatedNote.id);
-      _notes.add(note);
-      _notesStreamController.add(_notes);
-      return updatedNote;
-    }
+    // make sure note exists
+    await getNote(id: note.id);
+
+    // update DB
+    await db.update(
+      noteTable,
+      {
+        textColumn: text,
+      },
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
+
+    final updatedNote = await getNote(id: note.id);
+    _notes.removeWhere((note) => note.id == updatedNote.id);
+    _notes.add(updatedNote);
+    _notesStreamController.add(_notes);
+    return updatedNote;
   }
 
   Future<void> deleteNote({required int id}) async {

@@ -188,6 +188,8 @@ class _LoginViewState extends State<LoginView> {
                                   errorMessage = 'Incorrect password.';
                                 } on InvalidCredentialAuthException {
                                   errorMessage = 'Invalid credential.';
+                                } on NetworkRequestFailedException {
+                                  errorMessage = 'Network error';
                                 } on GenericAuthException catch (e) {
                                   errorMessage = errorMessage = e.toString();
                                 }

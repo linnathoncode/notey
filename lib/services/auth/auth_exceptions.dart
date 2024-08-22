@@ -17,3 +17,5 @@ class WeakPasswordAuthException implements Exception {}
 class GenericAuthException implements Exception {}
 
 class UserNotLoggedInAuthException implements Exception {}
+
+class NetworkRequestFailedException implements Exception {}

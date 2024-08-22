@@ -204,6 +204,8 @@ class _RegisterViewState extends State<RegisterView> {
                                 'Email/password accounts are not enabled.';
                           } on WeakPasswordAuthException {
                             errorMessage = 'The password is too weak.';
+                          } on NetworkRequestFailedException {
+                            errorMessage = 'Network error';
                           } on GenericAuthException catch (e) {
                             errorMessage = e.toString();
                           }

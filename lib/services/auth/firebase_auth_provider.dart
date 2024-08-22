@@ -5,6 +5,7 @@ import 'package:notey/services/auth/auth_user.dart';
 import 'package:notey/services/auth/auth_exceptions.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
+// import 'dart:developer' as devtools show log;
 
 class FirebaseAuthProvider implements AuthProvider {
   @override
@@ -31,6 +32,8 @@ class FirebaseAuthProvider implements AuthProvider {
           throw OperationNotAllowedAuthException();
         case 'weak-password':
           throw WeakPasswordAuthException();
+        case 'network-request-failed':
+          throw NetworkRequestFailedException();
         default:
           throw GenericAuthException();
       }
@@ -77,6 +80,8 @@ class FirebaseAuthProvider implements AuthProvider {
           throw WrongPasswordAuthException();
         case 'invalid-credential':
           throw InvalidCredentialAuthException();
+        case 'network-request-failed':
+          throw NetworkRequestFailedException();
         default:
           throw GenericAuthException();
       }

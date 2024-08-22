@@ -26,6 +26,10 @@ class _NotesViewState extends State<NotesView> {
     }
   }
 
+  Future<DatabaseUser> getCurrentUser(String email) async {
+    return await _notesService.getUser(email: email);
+  }
+
   @override
   void initState() {
     _notesService = NotesService();
@@ -83,18 +87,25 @@ class _NotesViewState extends State<NotesView> {
       body: FutureBuilder(
         future: _notesService.getOrCreateUser(email: userEmail),
         builder: (context, snapshot) {
+          final user = snapshot.data;
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               return StreamBuilder(
                 stream: _notesService.allNotes,
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                      return const Center(
+                          child: Text("You done have any notes!"));
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
+                        devtools.log(snapshot.data.toString());
                         //sort the notes from newest to oldest
                         late final allNotes =
-                            snapshot.data as List<DatabaseNote>;
+                            (snapshot.data as List<DatabaseNote>)
+                                .where((note) => note.userId == user?.id)
+                                .toList();
                         allNotes.sort((a, b) => b.id.compareTo(a.id));
                         devtools.log(allNotes.toString());
                         return ListView.builder(

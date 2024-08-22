@@ -18,6 +18,14 @@ class _NotesViewState extends State<NotesView> {
   final user = AuthService.firebase().currentUser;
   String get userEmail => user!.email!;
 
+  Future<void> deleteNoteFromDatabase(DatabaseNote note) async {
+    try {
+      await _notesService.deleteNote(id: note.id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   @override
   void initState() {
     _notesService = NotesService();
@@ -84,13 +92,15 @@ class _NotesViewState extends State<NotesView> {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
-                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        //sort the notes from newest to oldest
+                        late final allNotes =
+                            snapshot.data as List<DatabaseNote>;
+                        allNotes.sort((a, b) => b.id.compareTo(a.id));
                         devtools.log(allNotes.toString());
                         return ListView.builder(
                           itemCount: allNotes.length,
                           itemBuilder: (context, index) {
-                            //biggest index to smallest index
-                            final note = allNotes[allNotes.length - 1 - index];
+                            final note = allNotes[index];
                             return Column(
                               children: [
                                 Container(
@@ -105,17 +115,46 @@ class _NotesViewState extends State<NotesView> {
                                       ),
                                     ],
                                   ),
-                                  child: ListTile(
-                                    title: Text(
-                                      note.text,
-                                      maxLines: 1,
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 8.0,
                                     ),
-                                    tileColor: Colors.yellow[50],
+                                    child: ListTile(
+                                      title: Text(
+                                        note.text,
+                                        maxLines: 1,
+                                        softWrap: true,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        color: Colors.yellow.shade800,
+                                        padding:
+                                            const EdgeInsets.only(left: 24),
+                                        iconSize: 24,
+                                        onPressed: () async {
+                                          final deleteNote =
+                                              await showDeleteNoteDialog(
+                                                  context);
+                                          devtools.log(
+                                              "Delete dialog returned: $deleteNote index: $index note id:${allNotes[index].id}");
+                                          if (deleteNote) {
+                                            final deletedNote = allNotes[index];
+                                            await deleteNoteFromDatabase(
+                                                deletedNote);
+                                            devtools.log(
+                                                "${deletedNote.text} was deleted");
+                                          } else {
+                                            devtools.log(
+                                                "Delete action was canceled");
+                                          }
+                                        },
+                                      ),
+                                      tileColor: Colors.yellow[50],
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(
@@ -171,6 +210,32 @@ Future<bool> showLogOutDialog(BuildContext context) {
               Navigator.of(context).pop(true);
             },
             child: const Text("Log out"),
+          )
+        ],
+      );
+    },
+  ).then((value) => value ?? false);
+}
+
+Future<bool> showDeleteNoteDialog(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Delete note"),
+        content: const Text("This note will be deleted forever, are you sure?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: const Text("Yes, delete"),
           )
         ],
       );

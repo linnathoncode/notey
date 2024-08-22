@@ -26,10 +26,6 @@ class _NotesViewState extends State<NotesView> {
     }
   }
 
-  Future<DatabaseUser> getCurrentUser(String email) async {
-    return await _notesService.getUser(email: email);
-  }
-
   @override
   void initState() {
     _notesService = NotesService();
@@ -96,12 +92,13 @@ class _NotesViewState extends State<NotesView> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                       return const Center(
-                          child: Text("You done have any notes!"));
+                          child: Text("You dont have any notes!"));
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         devtools.log(snapshot.data.toString());
                         //sort the notes from newest to oldest
+                        //get only current user's notes
                         late final allNotes =
                             (snapshot.data as List<DatabaseNote>)
                                 .where((note) => note.userId == user?.id)

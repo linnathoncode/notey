@@ -5,6 +5,7 @@ import 'package:notey/views/dev_menu_view.dart';
 import 'package:notey/views/login_view.dart';
 import 'package:notey/views/notes/new_note_view.dart';
 import 'package:notey/views/notes/notes_view.dart';
+import 'package:notey/views/notes/test_note_slide_view.dart';
 import 'package:notey/views/register_view.dart';
 import 'package:notey/views/verify_email_view.dart';
 
@@ -28,6 +29,7 @@ void main() async {
         verifyRoute: (context) => const VerifyEmailView(),
         homepageRoute: (context) => const HomePage(),
         newNoteRoute: (context) => const NewNoteView(),
+        testNoteRoute: (context) => const MultiSelect(),
       },
     ),
   );

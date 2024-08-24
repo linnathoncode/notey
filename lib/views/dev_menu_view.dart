@@ -169,6 +169,37 @@ class DevMenuView extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 30),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Stack(
+                children: <Widget>[
+                  Positioned.fill(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          gradient: LinearGradient(colors: [
+                        Colors.red,
+                        Color.fromARGB(255, 234, 91, 81)
+                      ])),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        testNoteRoute,
+                        (route) => false,
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.only(
+                            top: 15, bottom: 15, left: 30, right: 30),
+                        foregroundColor: Colors.white,
+                        textStyle: const TextStyle(fontSize: 15)),
+                    child: const Text("Test Note View"),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

@@ -16,6 +16,7 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final NotesService _notesService;
   final user = AuthService.firebase().currentUser;
+
   String get userEmail => user!.email!;
 
   Future<void> deleteNoteFromDatabase(DatabaseNote note) async {
@@ -105,72 +106,7 @@ class _NotesViewState extends State<NotesView> {
                                 .toList();
                         allNotes.sort((a, b) => b.id.compareTo(a.id));
                         devtools.log(allNotes.toString());
-                        return ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.yellow.shade800,
-                                        blurRadius: 7.0,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                    ),
-                                    child: ListTile(
-                                      title: Text(
-                                        note.text,
-                                        maxLines: 1,
-                                        softWrap: true,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        color: Colors.yellow.shade800,
-                                        padding:
-                                            const EdgeInsets.only(left: 24),
-                                        iconSize: 24,
-                                        onPressed: () async {
-                                          final deleteNote =
-                                              await showDeleteNoteDialog(
-                                                  context);
-                                          devtools.log(
-                                              "Delete dialog returned: $deleteNote index: $index note id:${allNotes[index].id}");
-                                          if (deleteNote) {
-                                            final deletedNote = allNotes[index];
-                                            await deleteNoteFromDatabase(
-                                                deletedNote);
-                                            devtools.log(
-                                                "${deletedNote.text} was deleted");
-                                          } else {
-                                            devtools.log(
-                                                "Delete action was canceled");
-                                          }
-                                        },
-                                      ),
-                                      tileColor: Colors.yellow[50],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                    height: 8), // Add space between ListTiles
-                              ],
-                            );
-                          },
-                        );
+                        return NoteCard(allNotes: allNotes);
                       } else {
                         return const CircularProgressIndicator();
                       }
@@ -249,4 +185,79 @@ Future<bool> showDeleteNoteDialog(BuildContext context) {
       );
     },
   ).then((value) => value ?? false);
+}
+
+class NoteCard extends StatefulWidget {
+  final List<DatabaseNote> allNotes;
+
+  const NoteCard({super.key, required this.allNotes});
+
+  @override
+  State<NoteCard> createState() => _NoteCardState();
+}
+
+class _NoteCardState extends State<NoteCard> {
+  List<DatabaseNote> trashCan = [];
+
+  bool existsInTrashCan(DatabaseNote note) => trashCan.contains(note);
+
+  void onDelete(DatabaseNote note) {
+    if (trashCan.contains(note)) {
+      trashCan.remove(note);
+    } else {
+      trashCan.add(note);
+    }
+    setState(() {});
+  }
+
+  void onTap() {
+    devtools.log("single tap");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        separatorBuilder: (context, index) => const SizedBox(height: 0),
+        itemCount:
+            widget.allNotes.length, // Access allNotes from the widget instance
+        itemBuilder: (context, index) {
+          final note =
+              widget.allNotes[index]; // Access the specific note by index
+          final isSelected = existsInTrashCan(note);
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            child: ListTile(
+              onLongPress: () => onDelete(note),
+              onTap: trashCan.isNotEmpty ? () => onDelete(note) : onTap,
+              selected: isSelected,
+              tileColor: Colors.white,
+              selectedColor: Colors.white,
+              selectedTileColor: Colors.yellow.shade800,
+              title: Text(
+                note.text,
+                maxLines: 1,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: Colors.black,
+                  width: 3,
+                  style: isSelected ? BorderStyle.solid : BorderStyle.none,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

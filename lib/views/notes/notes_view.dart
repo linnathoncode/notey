@@ -17,6 +17,8 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final NotesService _notesService;
   final user = AuthService.firebase().currentUser;
+  final ValueNotifier<bool> _isDeleteMode = ValueNotifier<bool>(false);
+  final List<DatabaseNote> _trashCan = [];
 
   String get userEmail => user!.email!;
 
@@ -25,6 +27,18 @@ class _NotesViewState extends State<NotesView> {
       await _notesService.deleteNote(id: note.id);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> _confirmAndDeleteNotes() async {
+    final shouldDelete = await showDeleteNoteDialog(context);
+    if (shouldDelete) {
+      for (var note in _trashCan) {
+        await deleteNoteFromDatabase(note);
+      }
+      _trashCan.clear(); // Clear trashCan after deletion
+      setState(() {}); // Refresh the UI
+      _isDeleteMode.value = false; // Exit delete mode
     }
   }
 
@@ -37,50 +51,75 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        actions: [
-          PopupMenuButton<MenuAction>(
-            offset: const Offset(50, 40),
-            onSelected: (value) async {
-              switch (value) {
-                case MenuAction.logout:
-                  final shouldLogout = await showLogOutDialog(context);
-                  if (shouldLogout) {
-                    final user = AuthService.firebase().currentUser;
-                    await AuthService.firebase().reload();
-                    await AuthService.firebase().logOut();
-                    if (context.mounted) {
-                      showInformationSnackBar(
-                          context, "Logged out from ${user?.email}");
-                    }
-                    if (context.mounted) {
-                      await Navigator.of(context).pushNamedAndRemoveUntil(
-                        loginRoute,
-                        (route) => false,
-                      );
-                    }
-                  }
-                  break;
-                case MenuAction.devmenu:
-                  await Navigator.of(context).pushNamed(devmenuRoute);
-                  break;
-              }
-            },
-            itemBuilder: (context) {
-              return const [
-                PopupMenuItem<MenuAction>(
-                    value: MenuAction.logout, child: Text("Log out")),
-                PopupMenuItem<MenuAction>(
-                    value: MenuAction.devmenu, child: Text("Dev Menu"))
-              ];
-            },
-          )
-        ],
-        title: const Text("Notey",
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.yellow.shade800,
-        foregroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _isDeleteMode,
+          builder: (context, isDeleteMode, child) {
+            return AppBar(
+              centerTitle: true,
+              actions: isDeleteMode
+                  ? [
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: _confirmAndDeleteNotes,
+                      ),
+                    ]
+                  : [
+                      PopupMenuButton<MenuAction>(
+                        offset: const Offset(50, 40),
+                        onSelected: (value) async {
+                          switch (value) {
+                            case MenuAction.logout:
+                              final shouldLogout =
+                                  await showLogOutDialog(context);
+                              if (shouldLogout) {
+                                final user = AuthService.firebase().currentUser;
+                                await AuthService.firebase().reload();
+                                await AuthService.firebase().logOut();
+                                if (context.mounted) {
+                                  showInformationSnackBar(context,
+                                      "Logged out from ${user?.email}");
+                                }
+                                if (context.mounted) {
+                                  await Navigator.of(context)
+                                      .pushNamedAndRemoveUntil(
+                                    loginRoute,
+                                    (route) => false,
+                                  );
+                                }
+                              }
+                              break;
+                            case MenuAction.devmenu:
+                              await Navigator.of(context)
+                                  .pushNamed(devmenuRoute);
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) {
+                          return const [
+                            PopupMenuItem<MenuAction>(
+                                value: MenuAction.logout,
+                                child: Text("Log out")),
+                            PopupMenuItem<MenuAction>(
+                                value: MenuAction.devmenu,
+                                child: Text("Dev Menu"))
+                          ];
+                        },
+                      )
+                    ],
+              title: Text(
+                isDeleteMode ? "Delete Notes" : "Notey",
+                style:
+                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor:
+                  isDeleteMode ? Colors.black : Colors.yellow.shade800,
+              foregroundColor:
+                  isDeleteMode ? Colors.yellow.shade800 : Colors.white,
+            );
+          },
+        ),
       ),
       body: FutureBuilder(
         future: _notesService.getOrCreateUser(email: userEmail),
@@ -94,20 +133,22 @@ class _NotesViewState extends State<NotesView> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                       return const Center(
-                          child: Text("You dont have any notes!"));
+                          child: Text("You don't have any notes!"));
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         devtools.log(snapshot.data.toString());
-                        //sort the notes from newest to oldest
-                        //get only current user's notes
                         late final allNotes =
                             (snapshot.data as List<DatabaseNote>)
                                 .where((note) => note.userId == user?.id)
                                 .toList();
                         allNotes.sort((a, b) => b.id.compareTo(a.id));
                         devtools.log(allNotes.toString());
-                        return NoteCard(allNotes: allNotes);
+                        return NoteCard(
+                          allNotes: allNotes,
+                          isDeleteMode: _isDeleteMode,
+                          trashCan: _trashCan,
+                        );
                       } else {
                         return const CircularProgressIndicator();
                       }
@@ -138,25 +179,30 @@ class _NotesViewState extends State<NotesView> {
 
 class NoteCard extends StatefulWidget {
   final List<DatabaseNote> allNotes;
+  final ValueNotifier<bool> isDeleteMode;
+  final List<DatabaseNote> trashCan;
 
-  const NoteCard({super.key, required this.allNotes});
+  const NoteCard(
+      {super.key,
+      required this.allNotes,
+      required this.isDeleteMode,
+      required this.trashCan});
 
   @override
   State<NoteCard> createState() => _NoteCardState();
 }
 
 class _NoteCardState extends State<NoteCard> {
-  List<DatabaseNote> trashCan = [];
-
-  bool existsInTrashCan(DatabaseNote note) => trashCan.contains(note);
+  bool existsInTrashCan(DatabaseNote note) => widget.trashCan.contains(note);
 
   void onDelete(DatabaseNote note) {
-    if (trashCan.contains(note)) {
-      trashCan.remove(note);
+    if (widget.trashCan.contains(note)) {
+      widget.trashCan.remove(note);
     } else {
-      trashCan.add(note);
+      widget.trashCan.add(note);
     }
     setState(() {});
+    widget.isDeleteMode.value = widget.trashCan.isNotEmpty;
   }
 
   void onTap() {
@@ -171,18 +217,16 @@ class _NoteCardState extends State<NoteCard> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         separatorBuilder: (context, index) => const SizedBox(height: 0),
-        itemCount:
-            widget.allNotes.length, // Access allNotes from the widget instance
+        itemCount: widget.allNotes.length,
         itemBuilder: (context, index) {
-          final note =
-              widget.allNotes[index]; // Access the specific note by index
+          final note = widget.allNotes[index];
           final isSelected = existsInTrashCan(note);
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             child: ListTile(
               onLongPress: () => onDelete(note),
-              onTap: trashCan.isNotEmpty ? () => onDelete(note) : onTap,
+              onTap: widget.trashCan.isNotEmpty ? () => onDelete(note) : onTap,
               selected: isSelected,
               tileColor: Colors.white,
               selectedColor: Colors.white,

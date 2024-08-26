@@ -14,11 +14,13 @@ class _NewNoteViewState extends State<NewNoteView> {
   DatabaseNote? _note;
   late final NotesService _notesService;
   late final TextEditingController _textController;
+  final ValueNotifier<bool> _isTextNotEmpty = ValueNotifier<bool>(false);
 
   @override
   void initState() {
     _notesService = NotesService();
     _textController = TextEditingController();
+    _textController.addListener(_onTextChanged);
     super.initState();
   }
 
@@ -31,6 +33,10 @@ class _NewNoteViewState extends State<NewNoteView> {
     final email = currentUser.email!;
     final owner = await _notesService.getUser(email: email);
     return await _notesService.createNote(owner: owner);
+  }
+
+  void _onTextChanged() {
+    _isTextNotEmpty.value = _textController.text.isNotEmpty;
   }
 
   void _textControllerListener() async {
@@ -75,8 +81,14 @@ class _NewNoteViewState extends State<NewNoteView> {
   void dispose() {
     final bool noteShouldExist = _deleteNoteIfTextIsEmpty();
     if (noteShouldExist) _saveNoteIfTextNotEmpty();
+    _textController.removeListener(_onTextChanged);
     _textController.dispose();
     super.dispose();
+  }
+
+  void _onCheckIconPressed() {
+    dispose();
+    Navigator.of(context).pop();
   }
 
   @override
@@ -84,6 +96,18 @@ class _NewNoteViewState extends State<NewNoteView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("New Note"),
+        actions: [
+          ValueListenableBuilder<bool>(
+            valueListenable: _isTextNotEmpty,
+            builder: (context, isTextNotEmpty, child) {
+              // add functionality
+              return const IconButton(
+                icon: Icon(Icons.check),
+                onPressed: null,
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: createNewNote(),
@@ -99,11 +123,11 @@ class _NewNoteViewState extends State<NewNoteView> {
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   decoration: const InputDecoration(
-                      hintText: "Write whats on your mind..."),
+                      hintText: "Write what's on your mind..."),
                 ),
               );
             default:
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
           }
         },
       ),

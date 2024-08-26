@@ -22,6 +22,12 @@ class _NotesViewState extends State<NotesView> {
 
   String get userEmail => user!.email!;
 
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
   Future<void> deleteNoteFromDatabase(DatabaseNote note) async {
     try {
       await _notesService.deleteNote(id: note.id);
@@ -37,15 +43,14 @@ class _NotesViewState extends State<NotesView> {
         await deleteNoteFromDatabase(note);
       }
       _trashCan.clear(); // Clear trashCan after deletion
-      setState(() {}); // Refresh the UI
+      //setState(() {}); // Refresh the UI
       _isDeleteMode.value = false; // Exit delete mode
     }
   }
 
-  @override
-  void initState() {
-    _notesService = NotesService();
-    super.initState();
+  void clearTrashcan() {
+    _trashCan.clear();
+    _isDeleteMode.value = false;
   }
 
   @override
@@ -58,6 +63,14 @@ class _NotesViewState extends State<NotesView> {
           builder: (context, isDeleteMode, child) {
             return AppBar(
               centerTitle: true,
+              leading: isDeleteMode
+                  ? IconButton(
+                      onPressed: () {
+                        clearTrashcan();
+                      },
+                      icon: const Icon(Icons.cancel),
+                    )
+                  : null,
               actions: isDeleteMode
                   ? [
                       IconButton(
@@ -113,8 +126,9 @@ class _NotesViewState extends State<NotesView> {
                 style:
                     const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-              backgroundColor:
-                  isDeleteMode ? Colors.black : Colors.yellow.shade800,
+              backgroundColor: isDeleteMode
+                  ? const Color.fromARGB(255, 87, 87, 87)
+                  : Colors.yellow.shade800,
               foregroundColor:
                   isDeleteMode ? Colors.yellow.shade800 : Colors.white,
             );
@@ -211,46 +225,53 @@ class _NoteCardState extends State<NoteCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        separatorBuilder: (context, index) => const SizedBox(height: 0),
-        itemCount: widget.allNotes.length,
-        itemBuilder: (context, index) {
-          final note = widget.allNotes[index];
-          final isSelected = existsInTrashCan(note);
+    return ValueListenableBuilder<bool>(
+      valueListenable: widget.isDeleteMode,
+      builder: (context, isDeleteMode, child) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) => const SizedBox(height: 0),
+            itemCount: widget.allNotes.length,
+            itemBuilder: (context, index) {
+              final note = widget.allNotes[index];
+              final isSelected = widget.trashCan.contains(note);
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-            child: ListTile(
-              onLongPress: () => onDelete(note),
-              onTap: widget.trashCan.isNotEmpty ? () => onDelete(note) : onTap,
-              selected: isSelected,
-              tileColor: Colors.white,
-              selectedColor: Colors.white,
-              selectedTileColor: Colors.yellow.shade800,
-              title: Text(
-                note.text,
-                maxLines: 1,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Colors.black,
-                  width: 3,
-                  style: isSelected ? BorderStyle.solid : BorderStyle.none,
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                child: ListTile(
+                  onLongPress: () => onDelete(note),
+                  onTap:
+                      widget.trashCan.isNotEmpty ? () => onDelete(note) : onTap,
+                  selected: isSelected,
+                  tileColor: Colors.white,
+                  selectedColor: Colors.white,
+                  selectedTileColor: Colors.yellow.shade800,
+                  title: Text(
+                    note.text,
+                    maxLines: 1,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(
+                      color: Colors.black,
+                      width: 3,
+                      style: isSelected ? BorderStyle.solid : BorderStyle.none,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

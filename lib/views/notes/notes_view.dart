@@ -43,6 +43,9 @@ class _NotesViewState extends State<NotesView> {
         await deleteNoteFromDatabase(note);
       }
       _trashCan.clear(); // Clear trashCan after deletion
+      //you dont have to use set state
+      //if you are using ValueListenerBuilders
+      //set state causes the whole widget to be redrawn
       //setState(() {}); // Refresh the UI
       _isDeleteMode.value = false; // Exit delete mode
     }

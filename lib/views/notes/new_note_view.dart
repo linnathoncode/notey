@@ -51,11 +51,12 @@ class _NewNoteViewState extends State<NewNoteView> {
     _textController.addListener(_textControllerListener);
   }
 
-  void _deleteNoteIfTextIsEmpty() {
+  bool _deleteNoteIfTextIsEmpty() {
     final note = _note;
     if (_textController.text.isEmpty && note != null) {
       _notesService.deleteNote(id: note.id);
     }
+    return _textController.text.isEmpty;
   }
 
   void _saveNoteIfTextNotEmpty() async {
@@ -66,13 +67,14 @@ class _NewNoteViewState extends State<NewNoteView> {
         note: note,
         text: text,
       );
+      _notesService.addNoteToStream();
     }
   }
 
   @override
   void dispose() {
-    _deleteNoteIfTextIsEmpty();
-    _saveNoteIfTextNotEmpty();
+    final bool noteShouldExist = _deleteNoteIfTextIsEmpty();
+    if (noteShouldExist) _saveNoteIfTextNotEmpty();
     _textController.dispose();
     super.dispose();
   }

@@ -91,8 +91,12 @@ class NotesService {
       text: text,
     );
     _notes.add(note);
-    _notesStreamController.add(_notes);
+    // _notesStreamController.add(_notes);
     return note;
+  }
+
+  void addNoteToStream() {
+    _notesStreamController.add(_notes);
   }
 
   Future<DatabaseNote> updateNote({
@@ -118,7 +122,7 @@ class NotesService {
     final updatedNote = await getNote(id: note.id);
     _notes.removeWhere((note) => note.id == updatedNote.id);
     _notes.add(updatedNote);
-    _notesStreamController.add(_notes);
+    // _notesStreamController.add(_notes);
     return updatedNote;
   }
 

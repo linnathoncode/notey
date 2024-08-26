@@ -3,6 +3,7 @@ import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/crud/notes_service.dart';
+import 'package:notey/utilities/show_dialoges.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 import 'dart:developer' as devtools show log;
 
@@ -133,58 +134,6 @@ class _NotesViewState extends State<NotesView> {
       ),
     );
   }
-}
-
-Future<bool> showLogOutDialog(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Log out"),
-        content: const Text("Are you sure you want to log out?"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text("Log out"),
-          )
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
-}
-
-Future<bool> showDeleteNoteDialog(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Delete note"),
-        content: const Text("This note will be deleted forever, are you sure?"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text("Yes, delete"),
-          )
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
 }
 
 class NoteCard extends StatefulWidget {

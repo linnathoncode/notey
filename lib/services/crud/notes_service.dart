@@ -168,7 +168,7 @@ class NotesService {
       //update cache
       _notes.removeWhere((note) => note.id == id);
       _notes.add(note);
-      _notesStreamController.add(_notes);
+      // _notesStreamController.add(_notes);
       return note;
     }
   }

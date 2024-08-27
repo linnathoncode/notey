@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/crud/notes_service.dart';
-import 'dart:developer' as devtools show log;
+// import 'dart:developer' as devtools show log;
 
 class NewNoteView extends StatefulWidget {
   const NewNoteView({super.key});
@@ -45,7 +45,6 @@ class _NewNoteViewState extends State<NewNoteView> {
       return;
     }
     final text = _textController.text;
-    devtools.log(text.toString());
     await _notesService.updateNote(
       note: note,
       text: text,
@@ -57,15 +56,15 @@ class _NewNoteViewState extends State<NewNoteView> {
     _textController.addListener(_textControllerListener);
   }
 
-  bool _deleteNoteIfTextIsEmpty() {
+  Future<bool> _deleteNoteIfTextIsEmpty() async {
     final note = _note;
     if (_textController.text.isEmpty && note != null) {
-      _notesService.deleteNote(id: note.id);
+      await _notesService.deleteNote(id: note.id);
     }
-    return _textController.text.isEmpty;
+    return _textController.text.isNotEmpty;
   }
 
-  void _saveNoteIfTextNotEmpty() async {
+  Future<void> _saveNoteIfTextNotEmpty() async {
     final note = _note;
     final text = _textController.text;
     if (text.isNotEmpty && note != null) {
@@ -78,9 +77,10 @@ class _NewNoteViewState extends State<NewNoteView> {
   }
 
   @override
-  void dispose() {
-    final bool noteShouldExist = _deleteNoteIfTextIsEmpty();
-    if (noteShouldExist) _saveNoteIfTextNotEmpty();
+  void dispose() async {
+    final bool noteShouldExist = await _deleteNoteIfTextIsEmpty();
+    // devtools.log(noteShouldExist.toString());
+    if (noteShouldExist) await _saveNoteIfTextNotEmpty();
     _textController.removeListener(_onTextChanged);
     _textController.dispose();
     super.dispose();

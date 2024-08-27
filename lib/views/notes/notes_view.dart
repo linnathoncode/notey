@@ -167,15 +167,15 @@ class _NotesViewState extends State<NotesView> {
                           trashCan: _trashCan,
                         );
                       } else {
-                        return const CircularProgressIndicator();
+                        return const Center(child: CircularProgressIndicator());
                       }
                     default:
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                   }
                 },
               );
             default:
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -199,18 +199,59 @@ class NoteCard extends StatefulWidget {
   final ValueNotifier<bool> isDeleteMode;
   final List<DatabaseNote> trashCan;
 
-  const NoteCard(
-      {super.key,
-      required this.allNotes,
-      required this.isDeleteMode,
-      required this.trashCan});
+  const NoteCard({
+    super.key,
+    required this.allNotes,
+    required this.isDeleteMode,
+    required this.trashCan,
+  });
 
   @override
   State<NoteCard> createState() => _NoteCardState();
 }
 
 class _NoteCardState extends State<NoteCard> {
-  bool existsInTrashCan(DatabaseNote note) => widget.trashCan.contains(note);
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  late List<DatabaseNote> _displayedNotes;
+
+  @override
+  void initState() {
+    super.initState();
+    _displayedNotes = List.from(widget.allNotes);
+  }
+
+  @override
+  void didUpdateWidget(covariant NoteCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Handle new notes being added
+    if (widget.allNotes.length > oldWidget.allNotes.length) {
+      final newNote = widget.allNotes.firstWhere(
+        (note) => !oldWidget.allNotes.contains(note),
+      );
+      _displayedNotes.insert(0, newNote);
+      _listKey.currentState?.insertItem(0);
+    }
+
+    // Handle notes being deleted
+    if (widget.allNotes.length < oldWidget.allNotes.length) {
+      for (var oldNote in oldWidget.allNotes) {
+        if (!widget.allNotes.contains(oldNote)) {
+          final index = _displayedNotes.indexOf(oldNote);
+          final removedNote = _displayedNotes.removeAt(index);
+          _listKey.currentState?.removeItem(
+            index,
+            (context, animation) => SizeTransition(
+              sizeFactor: animation,
+              axis: Axis.vertical,
+              child: _buildListTile(removedNote,
+                  isSelected: false, animation: animation),
+            ),
+          );
+        }
+      }
+    }
+  }
 
   void onDelete(DatabaseNote note) {
     if (widget.trashCan.contains(note)) {
@@ -226,6 +267,50 @@ class _NoteCardState extends State<NoteCard> {
     devtools.log("single tap");
   }
 
+  Widget _buildListTile(DatabaseNote note,
+      {required bool isSelected, required Animation<double> animation}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      child: FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: animation.drive(
+            Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
+          ),
+          child: ListTile(
+            onLongPress: () => onDelete(note),
+            onTap: widget.trashCan.isNotEmpty ? () => onDelete(note) : onTap,
+            selected: isSelected,
+            tileColor: Colors.white,
+            selectedColor: Colors.white,
+            selectedTileColor: Colors.yellow.shade800,
+            title: Text(
+              note.text,
+              maxLines: 1,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(
+                color: Colors.black,
+                width: 3,
+                style: isSelected ? BorderStyle.solid : BorderStyle.none,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -233,43 +318,20 @@ class _NoteCardState extends State<NoteCard> {
       builder: (context, isDeleteMode, child) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.separated(
+          child: AnimatedList(
+            key: _listKey,
+            initialItemCount: _displayedNotes.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (context, index) => const SizedBox(height: 0),
-            itemCount: widget.allNotes.length,
-            itemBuilder: (context, index) {
-              final note = widget.allNotes[index];
+            itemBuilder: (context, index, animation) {
+              final note = _displayedNotes[index];
               final isSelected = widget.trashCan.contains(note);
 
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                child: ListTile(
-                  onLongPress: () => onDelete(note),
-                  onTap:
-                      widget.trashCan.isNotEmpty ? () => onDelete(note) : onTap,
-                  selected: isSelected,
-                  tileColor: Colors.white,
-                  selectedColor: Colors.white,
-                  selectedTileColor: Colors.yellow.shade800,
-                  title: Text(
-                    note.text,
-                    maxLines: 1,
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: Colors.black,
-                      width: 3,
-                      style: isSelected ? BorderStyle.solid : BorderStyle.none,
-                    ),
-                  ),
-                ),
+              return SizeTransition(
+                sizeFactor: animation,
+                axis: Axis.vertical,
+                child: _buildListTile(note,
+                    isSelected: isSelected, animation: animation),
               );
             },
           ),

@@ -86,10 +86,10 @@ class _NewNoteViewState extends State<NewNoteView> {
     super.dispose();
   }
 
-  void _onCheckIconPressed() {
-    dispose();
-    Navigator.of(context).pop();
-  }
+  // void _onCheckIconPressed() {
+  //   dispose();
+  //   Navigator.of(context).pop();
+  // }
 
   @override
   Widget build(BuildContext context) {

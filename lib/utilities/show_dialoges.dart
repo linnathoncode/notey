@@ -26,13 +26,14 @@ Future<bool> showLogOutDialog(BuildContext context) {
   ).then((value) => value ?? false);
 }
 
-Future<bool> showDeleteNoteDialog(BuildContext context) {
+Future<bool> showDeleteNoteDialog(BuildContext context, int numberOfNotes) {
   return showDialog<bool>(
     context: context,
     builder: (context) {
       return AlertDialog(
         title: const Text("Delete note"),
-        content: const Text("This note will be deleted forever, are you sure?"),
+        content: Text(
+            "$numberOfNotes note(s) will be deleted forever, are you sure?"),
         actions: [
           TextButton(
             onPressed: () {

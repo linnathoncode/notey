@@ -113,13 +113,12 @@ class PrettyCard extends StatelessWidget {
   final List trashCan;
 
   const PrettyCard(
-      {Key? key,
+      {super.key,
       required this.name,
       required this.isSelected,
       this.onDelete,
       this.onTap,
-      required this.trashCan})
-      : super(key: key);
+      required this.trashCan});
 
   @override
   Widget build(BuildContext context) {

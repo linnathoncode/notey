@@ -37,7 +37,7 @@ class _NotesViewState extends State<NotesView> {
   }
 
   Future<void> _confirmAndDeleteNotes() async {
-    final shouldDelete = await showDeleteNoteDialog(context);
+    final shouldDelete = await showDeleteNoteDialog(context, _trashCan.length);
     if (shouldDelete) {
       for (var note in _trashCan) {
         await deleteNoteFromDatabase(note);

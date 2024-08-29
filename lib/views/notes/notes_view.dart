@@ -3,7 +3,7 @@ import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/crud/notes_service.dart';
-import 'package:notey/utilities/show_dialoges.dart';
+import 'package:notey/utilities/show_dialog.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 import 'dart:developer' as devtools show log;
 
@@ -39,7 +39,9 @@ class _NotesViewState extends State<NotesView> {
   }
 
   Future<void> _confirmAndDeleteNotes() async {
-    final shouldDelete = await showDeleteNoteDialog(context, _trashCan.length);
+    final String dialogContent =
+        "${_trashCan.length} note(s) will be deleted forever, are you sure?";
+    final shouldDelete = await showDeleteNoteDialog(context, dialogContent);
     if (shouldDelete) {
       for (var note in _trashCan) {
         await deleteNoteFromDatabase(note);

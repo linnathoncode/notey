@@ -154,6 +154,7 @@ class _LoginViewState extends State<LoginView> {
                                 try {
                                   await AuthService.firebase()
                                       .logIn(email: email, password: password);
+                                  await AuthService.firebase().reload();
                                   if (user?.isEmailVerified ?? false) {
                                     if (context.mounted) {
                                       devtools.log(AuthService.firebase()

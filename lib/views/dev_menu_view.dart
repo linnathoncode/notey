@@ -155,7 +155,7 @@ class DevMenuView extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        newNoteRoute,
+                        createOrUpdateNoteRoute,
                         (route) => false,
                       );
                     },

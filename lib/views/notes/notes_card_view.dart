@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notey/services/crud/notes_service.dart';
-import 'dart:developer' as devtools show log;
+// import 'dart:developer' as devtools show log;
+import 'package:notey/views/notes/create_or_update_note_view.dart';
 
 class NoteCard extends StatefulWidget {
   final List<DatabaseNote> allNotes;
@@ -59,6 +60,25 @@ class _NoteCardState extends State<NoteCard> {
         }
       }
     }
+// Handle notes being updated
+
+    for (var note in widget.allNotes) {
+      final oldNoteIndex = oldWidget.allNotes.indexOf(note);
+      if (oldNoteIndex != -1) {
+        final oldNote = oldWidget.allNotes[oldNoteIndex];
+        if (note.text != oldNote.text) {
+          final index = _displayedNotes.indexOf(oldNote);
+          _displayedNotes[index] = note;
+          // Optionally trigger a visual update here
+          setState(
+            () {
+              // This will cause the AnimatedSwitcher to trigger an animation
+            },
+          );
+          break; // Add break statement to exit the loop after updating the note
+        }
+      }
+    }
   }
 
   void onDelete(DatabaseNote note) {
@@ -69,10 +89,6 @@ class _NoteCardState extends State<NoteCard> {
     }
     setState(() {});
     widget.isDeleteMode.value = widget.trashCan.isNotEmpty;
-  }
-
-  void onTap() {
-    devtools.log("single tap");
   }
 
   Widget _buildListTile(DatabaseNote note,
@@ -90,7 +106,15 @@ class _NoteCardState extends State<NoteCard> {
           ),
           child: ListTile(
             onLongPress: () => onDelete(note),
-            onTap: widget.trashCan.isNotEmpty ? () => onDelete(note) : onTap,
+            onTap: widget.trashCan.isNotEmpty
+                ? () => onDelete(note)
+                : () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CreateOrUpdateNoteView(
+                          currentNote: note,
+                        ),
+                      ),
+                    ),
             selected: isSelected,
             tileColor: Colors.white,
             selectedColor: Colors.white,

@@ -4,5 +4,5 @@ const notesRoute = '/notes/';
 const devmenuRoute = '/devmenu/';
 const verifyRoute = '/verify/';
 const homepageRoute = '/homepage/';
-const newNoteRoute = '/notes/new-note/';
+const createOrUpdateNoteRoute = '/notes/create_or_update_note/';
 const testNoteRoute = 'notes/test-note';

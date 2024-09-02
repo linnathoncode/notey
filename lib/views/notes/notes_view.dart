@@ -153,20 +153,23 @@ class _NotesViewState extends State<NotesView> {
               return StreamBuilder(
                 stream: _notesService.allNotes,
                 builder: (context, snapshot) {
+                  devtools.log("STREAM UPDATED");
+                  devtools.log("Data: ${snapshot.data.toString()}");
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
+                      //FIX THIS CASE FOR IT TO BE USER DEPENDANT
                       return const Center(
                           child: Text("You don't have any notes!"));
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
-                        devtools.log(snapshot.data.toString());
+                        // devtools.log(snapshot.data.toString());
                         late final allNotes =
                             (snapshot.data as List<DatabaseNote>)
                                 .where((note) => note.userId == user?.id)
                                 .toList();
                         allNotes.sort((a, b) => b.id.compareTo(a.id));
-                        devtools.log(allNotes.toString());
+                        // devtools.log(allNotes.toString());
                         return NoteCard(
                           allNotes: allNotes,
                           isDeleteMode: _isDeleteMode,
@@ -187,7 +190,7 @@ class _NotesViewState extends State<NotesView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.of(context).pushNamed(newNoteRoute);
+          await Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
         },
         backgroundColor: Colors.yellow[800],
         foregroundColor: Colors.white,

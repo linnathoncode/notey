@@ -137,9 +137,8 @@ class _NotesViewState extends State<NotesView> {
               ),
               backgroundColor: isDeleteMode
                   ? const Color.fromARGB(255, 87, 87, 87)
-                  : Colors.yellow.shade800,
-              foregroundColor:
-                  isDeleteMode ? Colors.yellow.shade800 : Colors.white,
+                  : Colors.cyan,
+              foregroundColor: isDeleteMode ? Colors.cyan : Colors.white,
             );
           },
         ),
@@ -192,13 +191,14 @@ class _NotesViewState extends State<NotesView> {
         onPressed: () async {
           await Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
         },
-        backgroundColor: Colors.yellow[800],
+        backgroundColor: Colors.cyan,
         foregroundColor: Colors.white,
         child: const Icon(
           Icons.add,
           size: 35,
         ),
       ),
+      backgroundColor: Colors.grey.shade100,
     );
   }
 }

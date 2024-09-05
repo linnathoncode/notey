@@ -111,9 +111,10 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   @override
   Widget build(BuildContext context) {
     devtools.log(_isUpdateMode.toString());
-
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.cyan,
+        foregroundColor: Colors.white,
         title:
             _isUpdateMode ? const Text("Update Note") : const Text("New Note"),
         actions: [
@@ -123,58 +124,86 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
               // add functionality
               return const IconButton(
                 icon: Icon(Icons.check),
+                color: Colors.white,
+                disabledColor: Color.fromARGB(255, 87, 87, 87),
                 onPressed: null,
               );
             },
           ),
         ],
       ),
-      body: _isUpdateMode
-          ? FutureBuilder(
-              future: getCurrentNote(),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.done:
-                    _note = snapshot.data as DatabaseNote;
-                    devtools.log(_note.toString());
-                    _setupTextControllerListener();
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _textController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                            hintText: "Write what's on your mind..."),
+      body: FutureBuilder(
+        future: _isUpdateMode ? getCurrentNote() : createNewNote(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              _note = snapshot.data as DatabaseNote;
+              // devtools.log(_note.toString());
+              _setupTextControllerListener();
+              return Container(
+                color: Colors.cyan, // Background color of the entire view
+                child: Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(
+                        16.0), // Add margin to make shadows visible
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20), // Curvy corners
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 10.0,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 8,
+                        bottom: 8), // Inner padding for the TextField
+                    child: TextField(
+                      showCursor: true,
+                      expands: true,
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      textAlignVertical: TextAlignVertical.top,
+                      style: const TextStyle(
+                        fontSize:
+                            16, // Adjust to suit the Redmi note app font size
+                        color: Colors.black,
+                        fontWeight:
+                            FontWeight.w400, // Adjust for note-like feel
                       ),
-                    );
-                  default:
-                    return const Center(child: CircularProgressIndicator());
-                }
-              },
-            )
-          : FutureBuilder(
-              future: createNewNote(),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.done:
-                    _note = snapshot.data as DatabaseNote;
-                    _setupTextControllerListener();
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _textController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                            hintText: "Write what's on your mind..."),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              20), // Curvy corners for TextField
+                          borderSide: BorderSide.none, // No visible border
+                        ),
+                        hintText: "Write what's on your mind...",
+                        hintStyle: TextStyle(
+                          color: Colors.grey.shade900, // Softer hint text color
+                          fontSize: 16,
+                        ),
+                        filled: true,
+                        fillColor:
+                            Colors.white, // Background color for TextField
+                        contentPadding: const EdgeInsets.only(
+                          top: 10.0,
+                          left: 15.0, // Padding for top-left alignment
+                        ),
                       ),
-                    );
-                  default:
-                    return const Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+                    ),
+                  ),
+                ),
+              );
+            default:
+              return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }

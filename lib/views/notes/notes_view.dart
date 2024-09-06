@@ -3,6 +3,7 @@ import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/crud/notes_service.dart';
+import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_dialog.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 import 'dart:developer' as devtools show log;
@@ -77,8 +78,7 @@ class _NotesViewState extends State<NotesView> {
                       onPressed: () {
                         _clearTrashCan();
                       },
-                      icon: const Icon(Icons.cancel),
-                    )
+                      icon: const Icon(Icons.cancel))
                   : null,
               actions: isDeleteMode
                   ? [
@@ -90,6 +90,7 @@ class _NotesViewState extends State<NotesView> {
                   : [
                       PopupMenuButton<MenuAction>(
                         offset: const Offset(50, 40),
+                        color: kSecondaryColor, // Background color for the menu
                         onSelected: (value) async {
                           switch (value) {
                             case MenuAction.logout:
@@ -119,13 +120,27 @@ class _NotesViewState extends State<NotesView> {
                           }
                         },
                         itemBuilder: (context) {
-                          return const [
-                            PopupMenuItem<MenuAction>(
-                                value: MenuAction.logout,
-                                child: Text("Log out")),
-                            PopupMenuItem<MenuAction>(
-                                value: MenuAction.devmenu,
-                                child: Text("Dev Menu"))
+                          return [
+                            const PopupMenuItem<MenuAction>(
+                              value: MenuAction.logout,
+                              child: Text(
+                                "Log out",
+                                style: TextStyle(
+                                  color:
+                                      kAccentColor, // Text color for the menu item
+                                ),
+                              ),
+                            ),
+                            const PopupMenuItem<MenuAction>(
+                              value: MenuAction.devmenu,
+                              child: Text(
+                                "Dev Menu",
+                                style: TextStyle(
+                                  color:
+                                      kAccentColor, // Text color for the menu item
+                                ),
+                              ),
+                            ),
                           ];
                         },
                       )
@@ -135,10 +150,8 @@ class _NotesViewState extends State<NotesView> {
                 style:
                     const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-              backgroundColor: isDeleteMode
-                  ? const Color.fromARGB(255, 87, 87, 87)
-                  : Colors.cyan,
-              foregroundColor: isDeleteMode ? Colors.cyan : Colors.white,
+              backgroundColor: isDeleteMode ? kSecondaryColor : kPrimaryColor,
+              foregroundColor: isDeleteMode ? kPrimaryColor : kAccentColor,
             );
           },
         ),
@@ -191,14 +204,14 @@ class _NotesViewState extends State<NotesView> {
         onPressed: () async {
           await Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
         },
-        backgroundColor: Colors.cyan,
-        foregroundColor: Colors.white,
+        backgroundColor: kPrimaryColor,
+        foregroundColor: kAccentColor,
         child: const Icon(
           Icons.add,
           size: 35,
         ),
       ),
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: kBackgroundColor,
     );
   }
 }

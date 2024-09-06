@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_exceptions.dart';
 import 'package:notey/services/auth/auth_service.dart';
+import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 import 'dart:developer' as devtools show log;
 
@@ -35,7 +36,11 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text('Login'))),
+      appBar: AppBar(
+        title: const Center(child: Text('Login')),
+        backgroundColor: kPrimaryColor,
+        foregroundColor: kAccentColor,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -47,11 +52,11 @@ class _LoginViewState extends State<LoginView> {
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: kAccentColor,
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: const [
                         BoxShadow(
-                          color: Color.fromARGB(75, 255, 0, 0),
+                          color: kPrimaryColor,
                           blurRadius: 7.0,
                           offset: Offset(0, 3),
                         ),
@@ -82,11 +87,11 @@ class _LoginViewState extends State<LoginView> {
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: kAccentColor,
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: const [
                         BoxShadow(
-                          color: Color.fromARGB(75, 255, 0, 0),
+                          color: kPrimaryColor,
                           blurRadius: 7.0,
                           offset: Offset(0, 3),
                         ),
@@ -119,11 +124,11 @@ class _LoginViewState extends State<LoginView> {
                   padding: const EdgeInsets.all(8),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: kAccentColor,
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: const [
                         BoxShadow(
-                          color: Color.fromARGB(75, 255, 0, 0),
+                          color: kPrimaryColor,
                           blurRadius: 7.0,
                           offset: Offset(0, 3),
                         ),
@@ -137,10 +142,7 @@ class _LoginViewState extends State<LoginView> {
                             child: Container(
                               decoration: const BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [
-                                    Colors.red,
-                                    Color.fromARGB(255, 234, 91, 81)
-                                  ],
+                                  colors: [kPrimaryColor, kSecondaryColor],
                                 ),
                               ),
                             ),
@@ -203,7 +205,7 @@ class _LoginViewState extends State<LoginView> {
                             style: TextButton.styleFrom(
                                 padding: const EdgeInsets.only(
                                     top: 15, bottom: 15, left: 30, right: 30),
-                                foregroundColor: Colors.white,
+                                foregroundColor: kAccentColor,
                                 textStyle: const TextStyle(fontSize: 15)),
                             child: const Text("Login"),
                           ),
@@ -219,12 +221,16 @@ class _LoginViewState extends State<LoginView> {
                         (route) => false,
                       );
                     },
-                    child: const Text('Not registered yet?')),
+                    child: const Text(
+                      'Not registered yet?',
+                      style: TextStyle(color: kSecondaryColor),
+                    )),
               ],
             ),
           ),
         ),
       ),
+      backgroundColor: kBackgroundColor,
     );
   }
 }

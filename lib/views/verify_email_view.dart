@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_service.dart';
+import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 
 class VerifyEmailView extends StatefulWidget {
@@ -51,8 +52,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         title: const Center(
           child: Text('Verify email'),
         ),
-        backgroundColor: Colors.blueGrey,
-        foregroundColor: Colors.white,
+        backgroundColor: kSecondaryColor,
+        foregroundColor: kAccentColor,
       ),
       body: Center(
         child: Column(
@@ -65,7 +66,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 child: Text(
                   'Verify your email address',
                   style: TextStyle(
-                    color: Colors.black54,
+                    color: kFontColor,
                     fontSize: 28,
                     fontWeight: FontWeight.w600,
                   ),
@@ -82,8 +83,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.blueGrey,
-                            Color.fromARGB(255, 134, 170, 188),
+                            kSecondaryColor,
+                            kAccentColor,
                           ],
                         ),
                       ),
@@ -100,7 +101,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                         left: 30,
                         right: 30,
                       ),
-                      foregroundColor: Colors.white,
+                      foregroundColor: kAccentColor,
                       textStyle: const TextStyle(fontSize: 15),
                     ),
                     child: const Text("Send email verification!"),

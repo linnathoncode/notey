@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_exceptions.dart';
 import 'package:notey/services/auth/auth_service.dart';
+import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 
 class RegisterView extends StatefulWidget {
@@ -39,7 +40,11 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text("Register"))),
+      appBar: AppBar(
+        title: const Center(child: Text("Register")),
+        backgroundColor: kPrimaryColor,
+        foregroundColor: kAccentColor,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -50,11 +55,11 @@ class _RegisterViewState extends State<RegisterView> {
                 padding: const EdgeInsets.all(8),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: kAccentColor,
                     borderRadius: BorderRadius.circular(5),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color.fromARGB(75, 255, 0, 0),
+                        color: kPrimaryColor,
                         blurRadius: 7.0,
                         offset: Offset(0, 3),
                       ),
@@ -65,6 +70,7 @@ class _RegisterViewState extends State<RegisterView> {
                     keyboardType: TextInputType.emailAddress,
                     controller: _email,
                     decoration: const InputDecoration(
+                      errorStyle: TextStyle(color: kErrorColor),
                       hintText: "Enter your e-mail",
                       contentPadding: EdgeInsets.symmetric(horizontal: 20),
                       border: OutlineInputBorder(
@@ -85,11 +91,11 @@ class _RegisterViewState extends State<RegisterView> {
                 padding: const EdgeInsets.all(8),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: kAccentColor,
                     borderRadius: BorderRadius.circular(5),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color.fromARGB(75, 255, 0, 0),
+                        color: kPrimaryColor,
                         blurRadius: 7.0,
                         offset: Offset(0, 3),
                       ),
@@ -102,6 +108,7 @@ class _RegisterViewState extends State<RegisterView> {
                     autocorrect: false,
                     controller: _password,
                     decoration: const InputDecoration(
+                      errorStyle: TextStyle(color: kErrorColor),
                       hintText: "Enter your password",
                       contentPadding: EdgeInsets.symmetric(horizontal: 20),
                       border: OutlineInputBorder(
@@ -122,11 +129,11 @@ class _RegisterViewState extends State<RegisterView> {
                 padding: const EdgeInsets.all(8),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: kAccentColor,
                     borderRadius: BorderRadius.circular(5),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color.fromARGB(75, 255, 0, 0),
+                        color: kPrimaryColor,
                         blurRadius: 7.0,
                         offset: Offset(0, 3),
                       ),
@@ -139,6 +146,7 @@ class _RegisterViewState extends State<RegisterView> {
                     autocorrect: false,
                     controller: _confirmPassword,
                     decoration: const InputDecoration(
+                      errorStyle: TextStyle(color: kErrorColor),
                       hintText: "Confirm your password",
                       contentPadding: EdgeInsets.symmetric(horizontal: 20),
                       border: OutlineInputBorder(
@@ -167,10 +175,7 @@ class _RegisterViewState extends State<RegisterView> {
                       child: Container(
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              Colors.red,
-                              Color.fromARGB(255, 234, 91, 81)
-                            ],
+                            colors: [kPrimaryColor, kSecondaryColor],
                           ),
                         ),
                       ),
@@ -217,7 +222,7 @@ class _RegisterViewState extends State<RegisterView> {
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(
                             top: 15, bottom: 15, left: 30, right: 30),
-                        foregroundColor: Colors.white,
+                        foregroundColor: kAccentColor,
                         textStyle: const TextStyle(fontSize: 15),
                       ),
                       child: const Text("Register"),
@@ -232,13 +237,17 @@ class _RegisterViewState extends State<RegisterView> {
                     (route) => false,
                   );
                 },
-                child: const Text('Already registered?'),
+                child: const Text(
+                  'Already registered?',
+                  style: TextStyle(color: kSecondaryColor),
+                ),
               ),
               const SizedBox(height: 20),
             ],
           ),
         ),
       ),
+      backgroundColor: kBackgroundColor,
     );
   }
 }

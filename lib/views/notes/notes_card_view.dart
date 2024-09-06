@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notey/services/crud/notes_service.dart';
+import 'package:notey/utilities/colors.dart';
 // import 'dart:developer' as devtools show log;
 import 'package:notey/views/notes/create_or_update_note_view.dart';
 
@@ -116,9 +117,9 @@ class _NoteCardState extends State<NoteCard> {
                       ),
                     ),
             selected: isSelected,
-            tileColor: Colors.white,
-            selectedColor: Colors.white,
-            selectedTileColor: Colors.cyan,
+            tileColor: kAccentColor,
+            selectedColor: kAccentColor,
+            selectedTileColor: kPrimaryColor,
             title: Text(
               note.text,
               maxLines: 1,
@@ -132,7 +133,7 @@ class _NoteCardState extends State<NoteCard> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
               side: BorderSide(
-                color: const Color.fromARGB(255, 87, 87, 87),
+                color: kSecondaryColor,
                 width: 3,
                 style: isSelected ? BorderStyle.solid : BorderStyle.none,
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notey/utilities/colors.dart';
 
 void showErrorSnackBar(BuildContext context, String errorMessage) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -6,11 +7,11 @@ void showErrorSnackBar(BuildContext context, String errorMessage) {
       content: Center(
         child: Text(
           "Error: $errorMessage",
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: kAccentColor),
         ),
       ),
       duration: const Duration(seconds: 2),
-      backgroundColor: Colors.red,
+      backgroundColor: kErrorColor,
     ),
   );
 }
@@ -21,11 +22,11 @@ void showInformationSnackBar(BuildContext context, String infoMessage) {
       content: Center(
         child: Text(
           infoMessage,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: kAccentColor),
         ),
       ),
       duration: const Duration(seconds: 2),
-      backgroundColor: Colors.green,
+      backgroundColor: kPrimaryColor,
     ),
   );
 }

@@ -3,6 +3,8 @@ import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/crud/notes_service.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:notey/utilities/colors.dart';
+
 class CreateOrUpdateNoteView extends StatefulWidget {
   final DatabaseNote? currentNote;
 
@@ -113,8 +115,8 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     devtools.log(_isUpdateMode.toString());
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan,
-        foregroundColor: Colors.white,
+        backgroundColor: kPrimaryColor,
+        foregroundColor: kAccentColor,
         title:
             _isUpdateMode ? const Text("Update Note") : const Text("New Note"),
         actions: [
@@ -125,7 +127,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
               return const IconButton(
                 icon: Icon(Icons.check),
                 color: Colors.white,
-                disabledColor: Color.fromARGB(255, 87, 87, 87),
+                disabledColor: kDisabledColor,
                 onPressed: null,
               );
             },
@@ -141,17 +143,17 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
               // devtools.log(_note.toString());
               _setupTextControllerListener();
               return Container(
-                color: Colors.cyan, // Background color of the entire view
+                color: kPrimaryColor, // Background color of the entire view
                 child: Center(
                   child: Container(
                     margin: const EdgeInsets.all(
                         16.0), // Add margin to make shadows visible
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: kAccentColor,
                       borderRadius: BorderRadius.circular(20), // Curvy corners
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.white,
+                          color: kAccentColor,
                           blurRadius: 10.0,
                           offset: Offset(0, 3),
                         ),
@@ -171,8 +173,8 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                       textAlignVertical: TextAlignVertical.top,
                       style: const TextStyle(
                         fontSize:
-                            16, // Adjust to suit the Redmi note app font size
-                        color: Colors.black,
+                            18, // Adjust to suit the Redmi note app font size
+                        color: kFontColor,
                         fontWeight:
                             FontWeight.w400, // Adjust for note-like feel
                       ),
@@ -184,12 +186,12 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                         ),
                         hintText: "Write what's on your mind...",
                         hintStyle: TextStyle(
-                          color: Colors.grey.shade900, // Softer hint text color
+                          color: kHintColor, // Softer hint text color
                           fontSize: 16,
                         ),
                         filled: true,
                         fillColor:
-                            Colors.white, // Background color for TextField
+                            kAccentColor, // Background color for TextField
                         contentPadding: const EdgeInsets.only(
                           top: 10.0,
                           left: 15.0, // Padding for top-left alignment

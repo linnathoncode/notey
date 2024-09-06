@@ -167,6 +167,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                     child: TextField(
                       showCursor: true,
                       expands: true,
+                      cursorColor: kPrimaryColor, // Cursor color
                       controller: _textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
@@ -197,6 +198,11 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                           left: 15.0, // Padding for top-left alignment
                         ),
                       ),
+                      cursorHeight:
+                          22, // Adjust cursor height to match text size
+                      cursorRadius: const Radius.circular(
+                          2.0), // Rounded cursor (droplet-like)
+                      cursorWidth: 2.0, // Thin cursor
                     ),
                   ),
                 ),

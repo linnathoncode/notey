@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_service.dart';
+import 'package:notey/utilities/colors.dart';
 import 'package:notey/views/dev_menu_view.dart';
 import 'package:notey/views/login_view.dart';
 import 'package:notey/views/notes/create_or_update_note_view.dart';
@@ -15,9 +16,12 @@ void main() async {
       debugShowCheckedModeBanner: false,
       title: 'Notey',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 163, 5, 5)),
-        useMaterial3: true,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: kPrimaryColor, // Cursor color
+          selectionColor:
+              kPrimaryColor.withOpacity(0.5), // Highlight selection color
+          selectionHandleColor: kPrimaryColor, // Drag handle color
+        ),
       ),
       home: const HomePage(),
       routes: {

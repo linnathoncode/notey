@@ -52,7 +52,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         title: const Center(
           child: Text('Verify email'),
         ),
-        backgroundColor: kSecondaryColor,
+        backgroundColor: kPrimaryColor,
         foregroundColor: kAccentColor,
       ),
       body: Center(
@@ -83,8 +83,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
+                            kPrimaryColor,
                             kSecondaryColor,
-                            kAccentColor,
                           ],
                         ),
                       ),

@@ -105,6 +105,12 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     super.dispose();
   }
 
+  void saveAndExit() {
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   // void _onCheckIconPressed() {
   //   dispose();
   //   Navigator.of(context).pop();
@@ -124,11 +130,15 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
             valueListenable: _isTextNotEmpty,
             builder: (context, isTextNotEmpty, child) {
               // add functionality
-              return const IconButton(
-                icon: Icon(Icons.check),
+              return IconButton(
+                icon: const Icon(Icons.check),
                 color: Colors.white,
                 disabledColor: kDisabledColor,
-                onPressed: null,
+                onPressed: isTextNotEmpty
+                    ? () {
+                        saveAndExit();
+                      }
+                    : null,
               );
             },
           ),

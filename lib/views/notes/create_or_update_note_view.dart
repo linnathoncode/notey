@@ -105,7 +105,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     super.dispose();
   }
 
-  void saveAndExit() {
+  void _saveAndExit() {
     if (mounted) {
       Navigator.of(context).pop();
     }
@@ -136,7 +136,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                 disabledColor: kDisabledColor,
                 onPressed: isTextNotEmpty
                     ? () {
-                        saveAndExit();
+                        _saveAndExit();
                       }
                     : null,
               );

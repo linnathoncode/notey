@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notey/components/button.dart';
 import 'package:notey/constants/routes.dart';
 
 class DevMenuView extends StatelessWidget {
@@ -15,158 +16,63 @@ class DevMenuView extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        Colors.red,
-                        Color.fromARGB(255, 234, 91, 81)
-                      ])),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        notesRoute,
-                        (route) => false,
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 30, right: 30),
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15)),
-                    child: const Text("Notes View"),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: customButton(
+                buttonText: 'Notes View',
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 30),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        Colors.red,
-                        Color.fromARGB(255, 234, 91, 81)
-                      ])),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        loginRoute,
-                        (route) => false,
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 30, right: 30),
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15)),
-                    child: const Text("Login View"),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: customButton(
+                buttonText: 'Login View',
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRoute,
+                    (route) => false,
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 30),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        Colors.red,
-                        Color.fromARGB(255, 234, 91, 81)
-                      ])),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        registerRoute,
-                        (route) => false,
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 30, right: 30),
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15)),
-                    child: const Text("Register View"),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: customButton(
+                buttonText: 'Register View',
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    registerRoute,
+                    (route) => false,
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 30),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        Colors.red,
-                        Color.fromARGB(255, 234, 91, 81)
-                      ])),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        verifyRoute,
-                        (route) => false,
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 30, right: 30),
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15)),
-                    child: const Text("Verify Email View"),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: customButton(
+                buttonText: 'Verify Email View',
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    verifyRoute,
+                    (route) => false,
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 30),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        Colors.red,
-                        Color.fromARGB(255, 234, 91, 81)
-                      ])),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        createOrUpdateNoteRoute,
-                        (route) => false,
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 30, right: 30),
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15)),
-                    child: const Text("New Note View"),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: customButton(
+                buttonText: 'New Note View',
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    createOrUpdateNoteRoute,
+                  );
+                },
               ),
             ),
           ],

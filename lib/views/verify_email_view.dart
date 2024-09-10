@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:notey/components/button.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/utilities/colors.dart';
@@ -74,41 +75,15 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               ),
             ),
             const SizedBox(height: 30),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            kPrimaryColor,
-                            kSecondaryColor,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      await AuthService.firebase().sendEmailVerification();
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.only(
-                        top: 15,
-                        bottom: 15,
-                        left: 30,
-                        right: 30,
-                      ),
-                      foregroundColor: kAccentColor,
-                      textStyle: const TextStyle(fontSize: 15),
-                    ),
-                    child: const Text("Send email verification!"),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: customButton(
+                buttonText: 'Send email verification!',
+                onPressed: () async {
+                  await AuthService.firebase().sendEmailVerification();
+                },
               ),
-            ),
+            )
           ],
         ),
       ),

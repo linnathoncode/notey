@@ -165,6 +165,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                         top: 8,
                         bottom: 8), // Inner padding for the TextField
                     child: TextField(
+                      autofocus: true,
                       showCursor: true,
                       expands: true,
                       cursorColor: kPrimaryColor, // Cursor color

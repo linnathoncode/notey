@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notey/components/button.dart';
+import 'package:notey/components/text_form_field.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_exceptions.dart';
 import 'package:notey/services/auth/auth_service.dart';
@@ -50,168 +52,80 @@ class _LoginViewState extends State<LoginView> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: kAccentColor,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: kPrimaryColor,
-                          blurRadius: 7.0,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      autocorrect: false,
-                      keyboardType: TextInputType.emailAddress,
-                      controller: _email,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your e-mail",
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        return null;
-                      },
-                    ),
+                  child: customTextField(
+                    obscureText: false,
+                    controller: _email,
+                    hintText: 'Enter your e-mail',
+                    validatorErrorMessage: 'Please enter your email',
+                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: kAccentColor,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: kPrimaryColor,
-                          blurRadius: 7.0,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      autocorrect: false,
-                      keyboardType: TextInputType.visiblePassword,
-                      controller: _password,
+                  child: customTextField(
                       obscureText: true,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your password",
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
+                      controller: _password,
+                      hintText: 'Enter your password',
+                      validatorErrorMessage: 'Please enter your password',
+                      keyboardType: TextInputType.visiblePassword),
                 ),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: kAccentColor,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: kPrimaryColor,
-                          blurRadius: 7.0,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned.fill(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [kPrimaryColor, kSecondaryColor],
-                                ),
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                final email = _email.text;
-                                final password = _password.text;
-                                final user = AuthService.firebase().currentUser;
-                                try {
-                                  await AuthService.firebase()
-                                      .logIn(email: email, password: password);
-                                  await AuthService.firebase().reload();
-                                  if (user?.isEmailVerified ?? false) {
-                                    if (context.mounted) {
-                                      devtools.log(AuthService.firebase()
-                                          .currentUser
-                                          .toString());
-                                      showInformationSnackBar(context,
-                                          "Logged in as ${user?.email}");
-                                      await Navigator.of(context)
-                                          .pushNamedAndRemoveUntil(
-                                        notesRoute,
-                                        (route) => false,
-                                      );
-                                    }
-                                  } else {
-                                    if (context.mounted) {
-                                      await Navigator.of(context)
-                                          .pushNamedAndRemoveUntil(
-                                        verifyRoute,
-                                        (route) => false,
-                                      );
-                                    }
-                                  }
-                                } on InvalidEmailAuthException {
-                                  errorMessage =
-                                      'The email address is not valid.';
-                                } on UserDisabledAuthException {
-                                  errorMessage = 'The user has been disabled.';
-                                } on UserNotFoundAuthException {
-                                  errorMessage =
-                                      'No user found with this email.';
-                                } on WrongPasswordAuthException {
-                                  errorMessage = 'Incorrect password.';
-                                } on InvalidCredentialAuthException {
-                                  errorMessage = 'Invalid credential.';
-                                } on NetworkRequestFailedException {
-                                  errorMessage = 'Network error';
-                                } on GenericAuthException catch (e) {
-                                  errorMessage = errorMessage = e.toString();
-                                }
+                  child: customButton(
+                    buttonText: "Login",
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        final email = _email.text;
+                        final password = _password.text;
+                        final user = AuthService.firebase().currentUser;
+                        try {
+                          await AuthService.firebase()
+                              .logIn(email: email, password: password);
+                          await AuthService.firebase().reload();
+                          if (user?.isEmailVerified ?? false) {
+                            if (context.mounted) {
+                              devtools.log(AuthService.firebase()
+                                  .currentUser
+                                  .toString());
+                              showInformationSnackBar(
+                                  context, "Logged in as ${user?.email}");
+                              await Navigator.of(context)
+                                  .pushNamedAndRemoveUntil(
+                                notesRoute,
+                                (route) => false,
+                              );
+                            }
+                          } else {
+                            if (context.mounted) {
+                              await Navigator.of(context)
+                                  .pushNamedAndRemoveUntil(
+                                verifyRoute,
+                                (route) => false,
+                              );
+                            }
+                          }
+                        } on InvalidEmailAuthException {
+                          errorMessage = 'The email address is not valid.';
+                        } on UserDisabledAuthException {
+                          errorMessage = 'The user has been disabled.';
+                        } on UserNotFoundAuthException {
+                          errorMessage = 'No user found with this email.';
+                        } on WrongPasswordAuthException {
+                          errorMessage = 'Incorrect password.';
+                        } on InvalidCredentialAuthException {
+                          errorMessage = 'Invalid credential.';
+                        } on NetworkRequestFailedException {
+                          errorMessage = 'Network error';
+                        } on GenericAuthException catch (e) {
+                          errorMessage = errorMessage = e.toString();
+                        }
 
-                                if (context.mounted && errorMessage != "") {
-                                  showErrorSnackBar(context, errorMessage);
-                                }
-                              }
-                            },
-                            style: TextButton.styleFrom(
-                                padding: const EdgeInsets.only(
-                                    top: 15, bottom: 15, left: 30, right: 30),
-                                foregroundColor: kAccentColor,
-                                textStyle: const TextStyle(fontSize: 15)),
-                            child: const Text("Login"),
-                          ),
-                        ],
-                      ),
-                    ),
+                        if (context.mounted && errorMessage != "") {
+                          showErrorSnackBar(context, errorMessage);
+                        }
+                      }
+                    },
                   ),
                 ),
                 TextButton(

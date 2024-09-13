@@ -7,7 +7,10 @@ void showErrorSnackBar(BuildContext context, String errorMessage) {
       content: Center(
         child: Text(
           "Error: $errorMessage",
-          style: const TextStyle(color: kAccentColor),
+          style: const TextStyle(
+            color: kAccentColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       duration: const Duration(seconds: 2),
@@ -22,7 +25,10 @@ void showInformationSnackBar(BuildContext context, String infoMessage) {
       content: Center(
         child: Text(
           infoMessage,
-          style: const TextStyle(color: kAccentColor),
+          style: const TextStyle(
+            color: kAccentColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       duration: const Duration(seconds: 2),

@@ -105,37 +105,43 @@ class _NoteCardState extends State<NoteCard> {
               end: Offset.zero,
             ).chain(CurveTween(curve: Curves.linear)),
           ),
-          child: ListTile(
-            onLongPress: () => onDelete(note),
-            onTap: widget.trashCan.isNotEmpty
-                ? () => onDelete(note)
-                : () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CreateOrUpdateNoteView(
-                          currentNote: note,
+          child: Material(
+            shadowColor: kSecondaryColor.withOpacity(0.5),
+            elevation:
+                isSelected ? 8.0 : 2.0, // Adjust elevation based on selection
+            color: kAccentColor, // Background color
+            borderRadius: BorderRadius.circular(10),
+            child: ListTile(
+              onLongPress: () => onDelete(note),
+              onTap: widget.trashCan.isNotEmpty
+                  ? () => onDelete(note)
+                  : () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CreateOrUpdateNoteView(
+                            currentNote: note,
+                          ),
                         ),
                       ),
-                    ),
-            selected: isSelected,
-            tileColor: kAccentColor,
-            selectedColor: kAccentColor,
-            selectedTileColor: kPrimaryColor,
-            title: Text(
-              note.text,
-              maxLines: 1,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              selected: isSelected,
+              selectedColor: kAccentColor,
+              selectedTileColor: kPrimaryColor,
+              title: Text(
+                note.text,
+                maxLines: 1,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: kSecondaryColor,
-                width: 3,
-                style: isSelected ? BorderStyle.solid : BorderStyle.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: kSecondaryColor,
+                  width: 3,
+                  style: isSelected ? BorderStyle.solid : BorderStyle.none,
+                ),
               ),
             ),
           ),

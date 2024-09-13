@@ -123,8 +123,15 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
         foregroundColor: kAccentColor,
-        title:
-            _isUpdateMode ? const Text("Update Note") : const Text("New Note"),
+        title: _isUpdateMode
+            ? const Text(
+                "Update Note",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            : const Text(
+                "New Note",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
         actions: [
           ValueListenableBuilder<bool>(
             valueListenable: _isTextNotEmpty,
@@ -161,13 +168,17 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                     decoration: BoxDecoration(
                       color: kAccentColor,
                       borderRadius: BorderRadius.circular(20), // Curvy corners
-                      boxShadow: const [
-                        BoxShadow(
-                          color: kAccentColor,
-                          blurRadius: 10.0,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
+                      // boxShadow: const [
+                      //   BoxShadow(
+                      //     color: kPrimaryColor,
+                      //     blurRadius: 8.0,
+                      //     offset: Offset(0, 2),
+                      //   ),
+                      // ],
+                      border: Border.all(
+                        color: kSecondaryColor, // Border color
+                        width: 4.0, // Border width
+                      ),
                     ),
                     padding: const EdgeInsets.only(
                         left: 16,
@@ -197,7 +208,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                           borderSide: BorderSide.none, // No visible border
                         ),
                         hintText: "Write what's on your mind...",
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: kHintColor, // Softer hint text color
                           fontSize: 16,
                         ),

@@ -11,9 +11,9 @@ Widget customButton({
       borderRadius: BorderRadius.circular(5),
       boxShadow: const [
         BoxShadow(
-          color: kPrimaryColor,
-          blurRadius: 7.0,
-          offset: Offset(0, 3),
+          color: kAccentColor,
+          blurRadius: 5.0,
+          offset: Offset(0, 2),
         ),
       ],
     ),
@@ -24,20 +24,7 @@ Widget customButton({
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF6DD5FA), // Light Blue
-                    Color(0xFF2980B9), // Medium Blue
-                    Color(0xFF2C3E50), // Dark Blue
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [
-                    0.0,
-                    0.5,
-                    1.0
-                  ], // Control the gradient stops for smoother transitions
-                ),
+                color: kPrimaryColor,
               ),
             ),
           ),
@@ -46,7 +33,8 @@ Widget customButton({
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               foregroundColor: kAccentColor,
-              textStyle: const TextStyle(fontSize: 15),
+              textStyle:
+                  const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             child: Text(buttonText), // Use the passed buttonText
           ),

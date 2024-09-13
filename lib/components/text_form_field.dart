@@ -15,8 +15,8 @@ Widget customTextField({
       boxShadow: const [
         BoxShadow(
           color: kPrimaryColor,
-          blurRadius: 7.0,
-          offset: Offset(0, 3),
+          blurRadius: 5.0,
+          offset: Offset(0, 2),
         ),
       ],
     ),

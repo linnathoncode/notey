@@ -95,7 +95,8 @@ class _NoteCardState extends State<NoteCard> {
   Widget _buildListTile(DatabaseNote note,
       {required bool isSelected, required Animation<double> animation}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 10, vertical: 6), // Increased padding for shadow
       child: FadeTransition(
         opacity: animation,
         child: SlideTransition(
@@ -106,11 +107,11 @@ class _NoteCardState extends State<NoteCard> {
             ).chain(CurveTween(curve: Curves.linear)),
           ),
           child: Material(
-            shadowColor: kSecondaryColor.withOpacity(0.5),
+            shadowColor: kPrimaryColor,
             elevation:
                 isSelected ? 8.0 : 2.0, // Adjust elevation based on selection
             color: kAccentColor, // Background color
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             child: ListTile(
               onLongPress: () => onDelete(note),
               onTap: widget.trashCan.isNotEmpty

@@ -182,10 +182,12 @@ class _NotesViewState extends State<NotesView> {
                                 .toList();
                         allNotes.sort((a, b) => b.id.compareTo(a.id));
                         // devtools.log(allNotes.toString());
-                        return NoteCard(
-                          allNotes: allNotes,
-                          isDeleteMode: _isDeleteMode,
-                          trashCan: _trashCan,
+                        return SingleChildScrollView(
+                          child: NoteCard(
+                            allNotes: allNotes,
+                            isDeleteMode: _isDeleteMode,
+                            trashCan: _trashCan,
+                          ),
                         );
                       } else {
                         return const Center(child: CircularProgressIndicator());

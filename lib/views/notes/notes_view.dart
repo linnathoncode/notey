@@ -23,7 +23,7 @@ class _NotesViewState extends State<NotesView> {
   final ValueNotifier<bool> _isDeleteMode = ValueNotifier<bool>(false);
   final List<DatabaseNote> _trashCan = [];
 
-  String get userEmail => user!.email!;
+  String get userEmail => user!.email;
 
   @override
   void initState() {

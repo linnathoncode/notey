@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:notey/api/api_keys.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -41,7 +42,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBaU-IhoiSZrSZlAZLUXJpKo1IduapLv18',
+    apiKey: firebaseWebApi,
     appId: '1:229131010297:web:13da6c057ba574095d2228',
     messagingSenderId: '229131010297',
     projectId: 'notey-ca7fe',
@@ -51,7 +52,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCL7i6CxYg_0O844hs6r43QhMv6WzWKVyc',
+    apiKey: firebaseAndroidApi,
     appId: '1:229131010297:android:8f1fbdfc551914a95d2228',
     messagingSenderId: '229131010297',
     projectId: 'notey-ca7fe',
@@ -59,7 +60,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAtiooGE4zbUNym4IoPKPd1NzoGaMBrUJI',
+    apiKey: firebaseIOSApi,
     appId: '1:229131010297:ios:0c547344e37696575d2228',
     messagingSenderId: '229131010297',
     projectId: 'notey-ca7fe',
@@ -68,7 +69,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAtiooGE4zbUNym4IoPKPd1NzoGaMBrUJI',
+    apiKey: firebaseMacOSApi,
     appId: '1:229131010297:ios:0c547344e37696575d2228',
     messagingSenderId: '229131010297',
     projectId: 'notey-ca7fe',
@@ -77,7 +78,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBaU-IhoiSZrSZlAZLUXJpKo1IduapLv18',
+    apiKey: firebaseWindowsApi,
     appId: '1:229131010297:web:74629804118489925d2228',
     messagingSenderId: '229131010297',
     projectId: 'notey-ca7fe',

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 @immutable
 class AuthUser {
   final bool isEmailVerified;
-  final id;
+  final String id;
   final String email;
   const AuthUser(
       {required this.id, required this.isEmailVerified, required this.email});

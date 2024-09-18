@@ -36,6 +36,7 @@ class FirebaseCloudStorage {
                 documentId: doc.id,
                 ownerUserId: doc.data()[ownerUserIdFieldName],
                 text: doc.data()[textFieldName],
+                date: doc.data()[dateFieldName],
               );
             },
           );
@@ -46,11 +47,21 @@ class FirebaseCloudStorage {
     }
   }
 
-  void createNewNote({required ownerUserId}) async {
-    notes.add({
-      ownerUserIdFieldName: ownerUserId,
-      textFieldName: '',
-    });
+  Future<CloudNote> createNewNote({required ownerUserId}) async {
+    final document = await notes.add(
+      {
+        ownerUserIdFieldName: ownerUserId,
+        textFieldName: '',
+        dateFieldName: Timestamp.fromDate(DateTime.now()),
+      },
+    );
+    final fetchedNote = await document.get();
+    return CloudNote(
+      documentId: fetchedNote.id,
+      ownerUserId: ownerUserId,
+      text: '',
+      date: Timestamp.fromDate(DateTime.now()),
+    );
   }
 
   Future<void> updateNote({

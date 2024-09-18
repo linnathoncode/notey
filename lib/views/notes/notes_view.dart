@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
-import 'package:notey/services/crud/notes_service.dart';
+import 'package:notey/services/cloud/cloud_note.dart';
+import 'package:notey/services/cloud/firebase_cloud_storage.dart';
 import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_dialog.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notey/views/notes/notes_card_view.dart';
+
+extension Count<T extends Iterable> on Stream<T> {
+  Stream<int> get getLength => map((event) => event.length);
+}
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -18,30 +23,27 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
-  late final NotesService _notesService;
-  final user = AuthService.firebase().currentUser;
+  late final FirebaseCloudStorage _notesService;
+  final userId = AuthService.firebase().currentUser!.id;
   final ValueNotifier<bool> _isDeleteMode = ValueNotifier<bool>(false);
-  final List<DatabaseNote> _trashCan = [];
-
-  String get userEmail => user!.email;
+  final List<CloudNote> _trashCan = [];
 
   @override
   void initState() {
-    _notesService = NotesService();
+    _notesService = FirebaseCloudStorage();
     super.initState();
   }
 
-  Future<void> deleteNoteFromDatabase(DatabaseNote note) async {
+  Future<void> deleteNoteFromDatabase(CloudNote note) async {
     try {
-      await _notesService.deleteNote(id: note.id);
+      await _notesService.deleteNote(documentId: note.documentId);
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> _confirmAndDeleteNotes() async {
-    final String dialogContent =
-        "${_trashCan.length} note(s) will be deleted forever, are you sure?";
+    const String dialogContent = "Note will be deleted forever, are you sure?";
     final shouldDelete = await showDeleteNoteDialog(context, dialogContent);
     if (shouldDelete) {
       for (var note in _trashCan) {
@@ -78,7 +80,8 @@ class _NotesViewState extends State<NotesView> {
                       onPressed: () {
                         _clearTrashCan();
                       },
-                      icon: const Icon(Icons.cancel))
+                      icon: const Icon(Icons.cancel),
+                    )
                   : null,
               actions: isDeleteMode
                   ? [
@@ -156,47 +159,32 @@ class _NotesViewState extends State<NotesView> {
           },
         ),
       ),
-      body: FutureBuilder(
-        future: _notesService.getOrCreateUser(email: userEmail),
+      body: StreamBuilder(
+        stream: _notesService.allNotes(ownerUserId: userId),
         builder: (context, snapshot) {
-          final user = snapshot.data;
+          devtools.log("STREAM UPDATED");
+          devtools.log("Data: ${snapshot.data.toString()}");
           switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return StreamBuilder(
-                stream: _notesService.allNotes,
-                builder: (context, snapshot) {
-                  devtools.log("STREAM UPDATED");
-                  devtools.log("Data: ${snapshot.data.toString()}");
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                      //FIX THIS CASE FOR IT TO BE USER DEPENDANT
-                      return const Center(
-                          child: Text("You don't have any notes!"));
-                    case ConnectionState.waiting:
-                    case ConnectionState.active:
-                      if (snapshot.hasData) {
-                        // devtools.log(snapshot.data.toString());
-                        late final allNotes =
-                            (snapshot.data as List<DatabaseNote>)
-                                .where((note) => note.userId == user?.id)
-                                .toList();
-                        allNotes.sort((a, b) => b.id.compareTo(a.id));
-                        // devtools.log(allNotes.toString());
-                        return SingleChildScrollView(
-                          child: NoteCard(
-                            allNotes: allNotes,
-                            isDeleteMode: _isDeleteMode,
-                            trashCan: _trashCan,
-                          ),
-                        );
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    default:
-                      return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              );
+            case ConnectionState.none:
+              //FIX THIS CASE FOR IT TO BE USER DEPENDANT
+              return const Center(child: Text("No internet connected!"));
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              if (snapshot.hasData) {
+                final allNotes = snapshot.data as Iterable<CloudNote>;
+                if (allNotes.isEmpty) {
+                  return const Center(child: Text("You don't have any notes!"));
+                }
+                return SingleChildScrollView(
+                  child: NoteCard(
+                    allNotes: allNotes,
+                    isDeleteMode: _isDeleteMode,
+                    // trashCan: _trashCan,
+                  ),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
             default:
               return const Center(child: CircularProgressIndicator());
           }

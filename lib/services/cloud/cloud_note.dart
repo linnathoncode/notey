@@ -5,11 +5,13 @@ class CloudNote {
   final String documentId;
   final String ownerUserId;
   final String text;
+  final Timestamp date;
 
   CloudNote({
     required this.documentId,
     required this.ownerUserId,
     required this.text,
+    required this.date,
   });
 
   /// Creates a `CloudNote` instance from a Firestore document snapshot.
@@ -27,5 +29,6 @@ class CloudNote {
   CloudNote.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : documentId = snapshot.id,
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
-        text = snapshot.data()[textFieldName] as String;
+        text = snapshot.data()[textFieldName] as String,
+        date = snapshot.data()[dateFieldName] as Timestamp;
 }

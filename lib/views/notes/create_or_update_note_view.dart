@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:notey/services/auth/auth_service.dart';
-import 'package:notey/services/crud/notes_service.dart';
+import 'package:notey/services/cloud/cloud_note.dart';
+import 'package:notey/services/cloud/firebase_cloud_storage.dart';
+import 'package:notey/utilities/colors.dart';
 import 'dart:developer' as devtools show log;
 
-import 'package:notey/utilities/colors.dart';
-
 class CreateOrUpdateNoteView extends StatefulWidget {
-  final DatabaseNote? currentNote;
+  final CloudNote? currentNote;
 
   const CreateOrUpdateNoteView({super.key, this.currentNote});
 
@@ -15,15 +15,15 @@ class CreateOrUpdateNoteView extends StatefulWidget {
 }
 
 class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
-  DatabaseNote? _note;
-  late final NotesService _notesService;
+  CloudNote? _note;
+  late final FirebaseCloudStorage _notesService;
   late final TextEditingController _textController;
   late final bool _isUpdateMode;
   final ValueNotifier<bool> _isTextNotEmpty = ValueNotifier<bool>(false);
 
   @override
   void initState() {
-    _notesService = NotesService();
+    _notesService = FirebaseCloudStorage();
     _isUpdateMode = isUpdateMode();
     _textController = TextEditingController();
     _textController.addListener(_onTextChanged);
@@ -34,24 +34,26 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     return (widget.currentNote != null) ? true : false;
   }
 
-  Future<DatabaseNote> createNewNote() async {
+  Future<CloudNote> createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = widget.currentNote;
+
+    if (widgetNote != null) {
+      _note = widgetNote;
+      devtools.log(_note!.text);
+      _textController.text = widgetNote.text;
+      return widgetNote;
+    }
+
     final existingNote = _note;
     if (existingNote != null) {
       return existingNote;
     }
     final currentUser = AuthService.firebase().currentUser!;
-    final email = currentUser.email;
-    final owner = await _notesService.getUser(email: email);
-    return await _notesService.createNote(owner: owner);
-  }
-
-  Future<DatabaseNote> getCurrentNote() async {
-    final existingNote =
-        await _notesService.getNote(id: widget.currentNote!.id);
-    devtools.log(existingNote.text);
-    _note = existingNote;
-    _textController.text = _note!.text;
-    return existingNote;
+    final userId = currentUser.id;
+    final newNote = await _notesService.createNewNote(ownerUserId: userId);
+    _note = newNote;
+    setState(() {});
+    return newNote;
   }
 
   void _onTextChanged() {
@@ -64,10 +66,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
       return;
     }
     final text = _textController.text;
-    await _notesService.updateNote(
-      note: note,
-      text: text,
-    );
+    await _notesService.updateNote(documentId: note.documentId, text: text);
   }
 
   void _setupTextControllerListener() {
@@ -78,8 +77,9 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   Future<bool> _deleteNoteIfTextIsEmpty() async {
     final note = _note;
     if (_textController.text.isEmpty && note != null) {
-      await _notesService.deleteNote(id: note.id);
+      await _notesService.deleteNote(documentId: note.documentId);
     }
+    setState(() {});
     return _textController.text.isNotEmpty;
   }
 
@@ -87,11 +87,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     final note = _note;
     final text = _textController.text;
     if (text.isNotEmpty && note != null) {
-      await _notesService.updateNote(
-        note: note,
-        text: text,
-      );
-      _notesService.addNoteToStream();
+      await _notesService.updateNote(documentId: note.documentId, text: text);
     }
   }
 
@@ -152,11 +148,11 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
         ],
       ),
       body: FutureBuilder(
-        future: _isUpdateMode ? getCurrentNote() : createNewNote(),
+        future: createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _note = snapshot.data as DatabaseNote;
+              _note = snapshot.data as CloudNote;
               // devtools.log(_note.toString());
               _setupTextControllerListener();
               return Container(

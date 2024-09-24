@@ -96,12 +96,12 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   }
 
   @override
-  void dispose() async {
-    final bool noteShouldExist = await _deleteNoteIfTextIsEmpty();
-    // devtools.log(noteShouldExist.toString());
-    if (noteShouldExist) await _saveNoteIfTextNotEmpty();
-    _textController.removeListener(_onTextChanged);
-    _textController.dispose();
+  void dispose() {
+    _deleteNoteIfTextIsEmpty().then((noteShouldExist) async {
+      if (noteShouldExist) await _saveNoteIfTextNotEmpty();
+      _textController.removeListener(_onTextChanged);
+      _textController.dispose();
+    });
     super.dispose();
   }
 

@@ -44,6 +44,7 @@ class _NotesViewState extends State<NotesView> {
 
   Future<void> _confirmAndDeleteNotes() async {
     const String dialogContent = "Note will be deleted forever, are you sure?";
+    if (!mounted) return;
     final shouldDelete = await showDeleteNoteDialog(context, dialogContent);
     if (shouldDelete) {
       for (var note in _trashCan) {

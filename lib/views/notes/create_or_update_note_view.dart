@@ -52,7 +52,9 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     final userId = currentUser.id;
     final newNote = await _notesService.createNewNote(ownerUserId: userId);
     _note = newNote;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     return newNote;
   }
 
@@ -79,7 +81,9 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     if (_textController.text.isEmpty && note != null) {
       await _notesService.deleteNote(documentId: note.documentId);
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     return _textController.text.isNotEmpty;
   }
 
@@ -92,13 +96,20 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   }
 
   @override
-  void dispose() async {
-    final bool noteShouldExist = await _deleteNoteIfTextIsEmpty();
-    // devtools.log(noteShouldExist.toString());
-    if (noteShouldExist) await _saveNoteIfTextNotEmpty();
-    _textController.removeListener(_onTextChanged);
-    _textController.dispose();
+  void dispose() {
+    if (mounted) {
+      _textController.removeListener(_onTextChanged);
+      _textController.dispose();
+      _handleNoteOnDispose();
+    }
     super.dispose();
+  }
+
+  Future<void> _handleNoteOnDispose() async {
+    final noteShouldExist = await _deleteNoteIfTextIsEmpty();
+    if (noteShouldExist) {
+      await _saveNoteIfTextNotEmpty();
+    }
   }
 
   void _saveAndExit() {

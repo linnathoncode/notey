@@ -93,7 +93,11 @@ class _NoteCardState extends State<NoteCard> {
                             trailing: IconButton(
                               color: kSecondaryColor,
                               icon: const Icon(Icons.delete),
-                              onPressed: () => _confirmAndDeleteNote(note),
+                              onPressed: () {
+                                if (context.mounted) {
+                                  _confirmAndDeleteNote(note);
+                                }
+                              },
                             ),
                             selectedColor: kAccentColor,
                             selectedTileColor: kPrimaryColor,

@@ -30,6 +30,7 @@ class _NoteCardState extends State<NoteCard> {
     _displayedNotes = List.from(widget.allNotes);
   }
 
+  //Called by flutter whenever the widget configuration changes.
   @override
   void didUpdateWidget(covariant NoteCard oldWidget) {
     super.didUpdateWidget(oldWidget);

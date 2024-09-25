@@ -105,6 +105,11 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
       _textController.dispose();
       _handleNoteOnDispose();
     }
+    _deleteNoteIfTextIsEmpty().then((noteShouldExist) async {
+      if (noteShouldExist) await _saveNoteIfTextNotEmpty();
+      _textController.removeListener(_onTextChanged);
+      _textController.dispose();
+    });
     super.dispose();
   }
 

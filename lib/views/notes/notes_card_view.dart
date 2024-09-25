@@ -37,6 +37,10 @@
 //   //   widget.isDeleteMode.value = widget.trashCan.isNotEmpty;
 //   //   setState(() {});
 //   // }
+  //Called by flutter whenever the widget configuration changes.
+  @override
+  void didUpdateWidget(covariant NoteCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
 //   Future<void> _confirmAndDeleteNote(CloudNote note) async {
 //     final firebase = FirebaseCloudStorage();

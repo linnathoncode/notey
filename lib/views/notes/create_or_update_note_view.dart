@@ -5,6 +5,9 @@ import 'package:notey/services/cloud/firebase_cloud_storage.dart';
 import 'package:notey/utilities/colors.dart';
 import 'dart:developer' as devtools show log;
 
+// BUG // fix the bug where a new note is created then disposed with empty text
+// which causes the both addition and deletion animations to played
+
 class CreateOrUpdateNoteView extends StatefulWidget {
   final CloudNote? currentNote;
 

@@ -3,10 +3,9 @@ import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
 import 'package:notey/utilities/colors.dart';
-import 'dart:developer' as devtools show log;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// BUG // fix the bug where a new note is created then disposed with empty text
-// which causes the both addition and deletion animations to played
+import 'dart:developer' as devtools show log;
 
 class CreateOrUpdateNoteView extends StatefulWidget {
   final CloudNote? currentNote;
@@ -39,53 +38,35 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
 
   Future<CloudNote> createOrGetExistingNote(BuildContext context) async {
     final widgetNote = widget.currentNote;
-
     if (widgetNote != null) {
       _note = widgetNote;
-      devtools.log(_note!.text);
+      devtools.log("Updating Note: ${_note!.text}");
       _textController.text = widgetNote.text;
       return widgetNote;
+    } else {
+      final existingNote = _note;
+      if (existingNote != null) {
+        return existingNote;
+      }
+      final currentUser = AuthService.firebase().currentUser!;
+      final userId = currentUser.id;
+      return CloudNote(
+        documentId: '',
+        ownerUserId: userId,
+        text: '',
+        date: Timestamp.fromDate(DateTime.now()),
+      );
     }
-
-    final existingNote = _note;
-    if (existingNote != null) {
-      return existingNote;
-    }
-    final currentUser = AuthService.firebase().currentUser!;
-    final userId = currentUser.id;
-    final newNote = await _notesService.createNewNote(ownerUserId: userId);
-    _note = newNote;
-    if (mounted) {
-      setState(() {});
-    }
-    return newNote;
   }
 
   void _onTextChanged() {
     _isTextNotEmpty.value = _textController.text.isNotEmpty;
   }
 
-  void _textControllerListener() async {
-    final note = _note;
-    if (note == null) {
-      return;
-    }
-    final text = _textController.text;
-    await _notesService.updateNote(documentId: note.documentId, text: text);
-  }
-
-  void _setupTextControllerListener() {
-    _textController.removeListener(_textControllerListener);
-    _textController.addListener(_textControllerListener);
-  }
-
   Future<bool> _deleteNoteIfTextIsEmpty() async {
     final note = _note;
     if (_textController.text.isEmpty && note != null) {
       await _notesService.deleteNote(documentId: note.documentId);
-    }
-    if (mounted) {
-      setState(() {});
     }
     return _textController.text.isNotEmpty;
   }
@@ -99,25 +80,37 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   }
 
   @override
-  void dispose() {
-    if (mounted) {
-      _textController.removeListener(_onTextChanged);
-      _textController.dispose();
-      _handleNoteOnDispose();
-    }
-    _deleteNoteIfTextIsEmpty().then((noteShouldExist) async {
-      if (noteShouldExist) await _saveNoteIfTextNotEmpty();
-      _textController.removeListener(_onTextChanged);
-      _textController.dispose();
-    });
+  void dispose() async {
+    await handleDispose();
+    _textController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleNoteOnDispose() async {
-    final noteShouldExist = await _deleteNoteIfTextIsEmpty();
-    if (noteShouldExist) {
-      await _saveNoteIfTextNotEmpty();
+  Future<void> handleDispose() async {
+    if (_isUpdateMode) {
+      final noteShouldExist = await _deleteNoteIfTextIsEmpty();
+      if (noteShouldExist) {
+        await _saveNoteIfTextNotEmpty();
+      }
+    } else {
+      if (_textController.text.isEmpty) {
+        _textController.dispose();
+        super.dispose();
+      } else {
+        createNewNote();
+      }
     }
+  }
+
+  Future<void> createNewNote() async {
+    final currentUser = AuthService.firebase().currentUser!;
+    final userId = currentUser.id;
+
+    final note = await _notesService.createNewNote(ownerUserId: userId);
+    await _notesService.updateNote(
+      documentId: note.documentId,
+      text: _textController.text,
+    );
   }
 
   void _saveAndExit() {
@@ -173,7 +166,6 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
             case ConnectionState.done:
               _note = snapshot.data as CloudNote;
               // devtools.log(_note.toString());
-              _setupTextControllerListener();
               return Container(
                 color: kPrimaryColor, // Background color of the entire view
                 child: Center(

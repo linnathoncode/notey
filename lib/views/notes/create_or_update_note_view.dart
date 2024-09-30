@@ -94,8 +94,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
       }
     } else {
       if (_textController.text.isEmpty) {
-        _textController.dispose();
-        super.dispose();
+        return;
       } else {
         createNewNote();
       }

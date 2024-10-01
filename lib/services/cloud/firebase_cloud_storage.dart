@@ -37,6 +37,7 @@ class FirebaseCloudStorage {
                 ownerUserId: doc.data()[ownerUserIdFieldName],
                 text: doc.data()[textFieldName],
                 date: doc.data()[dateFieldName],
+                title: doc.data()[titleFieldName],
               );
             },
           );
@@ -47,11 +48,22 @@ class FirebaseCloudStorage {
     }
   }
 
+  // Future<void> addTitleFieldToAllNotes() async {
+  //   QuerySnapshot snapshot = await notes.get();
+  //   for (QueryDocumentSnapshot doc in snapshot.docs) {
+  //     await doc.reference.update({
+  //       titleFieldName: '',
+  //     });
+  //   }
+  //   print('DOCUMENTS UPDATED');
+  // }
+
   Future<CloudNote> createNewNote({required ownerUserId}) async {
     final document = await notes.add(
       {
         ownerUserIdFieldName: ownerUserId,
         textFieldName: '',
+        titleFieldName: '',
         dateFieldName: Timestamp.fromDate(DateTime.now()),
       },
     );
@@ -60,6 +72,7 @@ class FirebaseCloudStorage {
       documentId: fetchedNote.id,
       ownerUserId: ownerUserId,
       text: '',
+      title: '',
       date: Timestamp.fromDate(DateTime.now()),
     );
   }
@@ -67,9 +80,12 @@ class FirebaseCloudStorage {
   Future<void> updateNote({
     required String documentId,
     required String text,
+    required String title,
   }) async {
     try {
-      await notes.doc(documentId).update({textFieldName: text});
+      await notes
+          .doc(documentId)
+          .update({textFieldName: text, titleFieldName: title});
     } catch (e) {
       throw CouldNotUpdateException();
     }

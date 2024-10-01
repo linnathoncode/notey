@@ -20,6 +20,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   CloudNote? _note;
   late final FirebaseCloudStorage _notesService;
   late final TextEditingController _textController;
+  late final TextEditingController _titleController;
   late final bool _isUpdateMode;
   final ValueNotifier<bool> _isTextNotEmpty = ValueNotifier<bool>(false);
 
@@ -28,6 +29,8 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     _notesService = FirebaseCloudStorage();
     _isUpdateMode = isUpdateMode();
     _textController = TextEditingController();
+    _titleController = TextEditingController();
+    _titleController.addListener(_onTextChanged);
     _textController.addListener(_onTextChanged);
     super.initState();
   }
@@ -40,8 +43,8 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     final widgetNote = widget.currentNote;
     if (widgetNote != null) {
       _note = widgetNote;
-      devtools.log("Updating Note: ${_note!.text}");
       _textController.text = widgetNote.text;
+      _titleController.text = widgetNote.title;
       return widgetNote;
     } else {
       final existingNote = _note;
@@ -54,28 +57,32 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
         documentId: '',
         ownerUserId: userId,
         text: '',
+        title: '',
         date: Timestamp.fromDate(DateTime.now()),
       );
     }
   }
 
   void _onTextChanged() {
-    _isTextNotEmpty.value = _textController.text.isNotEmpty;
+    _isTextNotEmpty.value =
+        (_textController.text.isNotEmpty || _titleController.text.isNotEmpty);
   }
 
   Future<bool> _deleteNoteIfTextIsEmpty() async {
     final note = _note;
-    if (_textController.text.isEmpty && note != null) {
+    if (!(_isTextNotEmpty.value) && note != null) {
       await _notesService.deleteNote(documentId: note.documentId);
     }
-    return _textController.text.isNotEmpty;
+    return _isTextNotEmpty.value;
   }
 
   Future<void> _saveNoteIfTextNotEmpty() async {
     final note = _note;
     final text = _textController.text;
-    if (text.isNotEmpty && note != null) {
-      await _notesService.updateNote(documentId: note.documentId, text: text);
+    final title = _titleController.text;
+    if (_isTextNotEmpty.value && note != null) {
+      await _notesService.updateNote(
+          documentId: note.documentId, text: text, title: title);
     }
   }
 
@@ -83,6 +90,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   void dispose() async {
     await handleDispose();
     _textController.dispose();
+    _titleController.dispose();
     super.dispose();
   }
 
@@ -93,7 +101,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
         await _saveNoteIfTextNotEmpty();
       }
     } else {
-      if (_textController.text.isEmpty) {
+      if (!_isTextNotEmpty.value) {
         return;
       } else {
         createNewNote();
@@ -106,10 +114,10 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     final userId = currentUser.id;
 
     final note = await _notesService.createNewNote(ownerUserId: userId);
+    final text = _textController.text;
+    final title = _titleController.text;
     await _notesService.updateNote(
-      documentId: note.documentId,
-      text: _textController.text,
-    );
+        documentId: note.documentId, text: text, title: title);
   }
 
   void _saveAndExit() {
@@ -165,76 +173,116 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
             case ConnectionState.done:
               _note = snapshot.data as CloudNote;
               // devtools.log(_note.toString());
-              return Container(
-                color: kPrimaryColor, // Background color of the entire view
-                child: Center(
-                  child: Container(
-                    margin: const EdgeInsets.all(
-                        16.0), // Add margin to make shadows visible
-                    decoration: BoxDecoration(
-                      color: kAccentColor,
-                      borderRadius: BorderRadius.circular(20), // Curvy corners
-                      // boxShadow: const [
-                      //   BoxShadow(
-                      //     color: kPrimaryColor,
-                      //     blurRadius: 8.0,
-                      //     offset: Offset(0, 2),
-                      //   ),
-                      // ],
-                      border: Border.all(
-                        color: kSecondaryColor, // Border color
-                        width: 4.0, // Border width
+
+              // MAKE CUSTOM TEXTFIELD
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Aligns items at the top
+                  children: [
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    // Title TextField
+                    Center(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height *
+                            0.1, // Make this smaller
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16.0), // Margin around the container
+                        decoration: BoxDecoration(
+                          color: kAccentColor,
+                          borderRadius:
+                              BorderRadius.circular(20), // Curvy corners
+                          border: Border.all(
+                            width: 4.0, // Border width
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: TextField(
+                          autofocus: false,
+                          showCursor: true,
+                          cursorColor: kPrimaryColor,
+                          controller: _titleController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 1, // Single line for the title
+                          style: const TextStyle(
+                            fontSize: 18, // Font size for the title
+                            color: kFontColor,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(20), // Curvy corners
+                              borderSide: BorderSide.none, // No visible border
+                            ),
+                            hintText: "Write a title...",
+                            hintStyle: const TextStyle(
+                              color: kHintColor,
+                              fontSize: 16,
+                            ),
+                            filled: true,
+                            fillColor: kAccentColor,
+                          ),
+                        ),
                       ),
                     ),
-                    padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 8,
-                        bottom: 8), // Inner padding for the TextField
-                    child: TextField(
-                      autofocus: true,
-                      showCursor: true,
-                      expands: true,
-                      cursorColor: kPrimaryColor, // Cursor color
-                      controller: _textController,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      textAlignVertical: TextAlignVertical.top,
-                      style: const TextStyle(
-                        fontSize:
-                            18, // Adjust to suit the Redmi note app font size
-                        color: kFontColor,
-                        fontWeight:
-                            FontWeight.w400, // Adjust for note-like feel
+                    // Spacing between TextFields
+                    const SizedBox(
+                      height: 16,
+                    ), // Adjust this for more or less spacing
+
+                    // Text TextField
+                    Center(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height *
+                            0.7, // Make this larger
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        decoration: BoxDecoration(
+                          color: kAccentColor,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            width: 4.0,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: TextField(
+                          autofocus: true,
+                          showCursor: true,
+                          expands: true,
+                          cursorColor: kPrimaryColor,
+                          controller: _textController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null, // Multiline for body text
+                          textAlignVertical: TextAlignVertical.top,
+                          style: const TextStyle(
+                            fontSize: 18, // Font size for body text
+                            color: kFontColor,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide.none,
+                            ),
+                            hintText: "Write what's on your mind...",
+                            hintStyle: const TextStyle(
+                              color: kHintColor,
+                              fontSize: 16,
+                            ),
+                            filled: true,
+                            fillColor: kAccentColor,
+                          ),
+                        ),
                       ),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Curvy corners for TextField
-                          borderSide: BorderSide.none, // No visible border
-                        ),
-                        hintText: "Write what's on your mind...",
-                        hintStyle: const TextStyle(
-                          color: kHintColor, // Softer hint text color
-                          fontSize: 16,
-                        ),
-                        filled: true,
-                        fillColor:
-                            kAccentColor, // Background color for TextField
-                        contentPadding: const EdgeInsets.only(
-                          top: 10.0,
-                          left: 15.0, // Padding for top-left alignment
-                        ),
-                      ),
-                      cursorHeight:
-                          22, // Adjust cursor height to match text size
-                      cursorRadius: const Radius.circular(
-                          2.0), // Rounded cursor (droplet-like)
-                      cursorWidth: 2.0, // Thin cursor
                     ),
-                  ),
+                  ],
                 ),
               );
+
             default:
               return const Center(child: CircularProgressIndicator());
           }

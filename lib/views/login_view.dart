@@ -52,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: customTextField(
+                  child: customTextFormField(
                     obscureText: false,
                     controller: _email,
                     hintText: 'Enter your e-mail',
@@ -62,7 +62,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: customTextField(
+                  child: customTextFormField(
                       obscureText: true,
                       controller: _password,
                       hintText: 'Enter your password',

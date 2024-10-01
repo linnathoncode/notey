@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notey/utilities/colors.dart';
 
-Widget customTextField({
+Widget customTextFormField({
   required String hintText,
   required String validatorErrorMessage,
   required TextInputType keyboardType,

@@ -55,7 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8),
-                child: customTextField(
+                child: customTextFormField(
                   obscureText: false,
                   controller: _email,
                   hintText: 'Enter your e-mail',
@@ -65,7 +65,7 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8),
-                child: customTextField(
+                child: customTextFormField(
                   obscureText: true,
                   controller: _password,
                   hintText: 'Enter your password',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notey/components/text_field.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
@@ -184,101 +185,27 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                       height: 16,
                     ),
                     // Title TextField
-                    Center(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height *
-                            0.1, // Make this smaller
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 16.0), // Margin around the container
-                        decoration: BoxDecoration(
-                          color: kAccentColor,
-                          borderRadius:
-                              BorderRadius.circular(20), // Curvy corners
-                          border: Border.all(
-                            width: 4.0, // Border width
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: TextField(
-                          autofocus: false,
-                          showCursor: true,
-                          cursorColor: kPrimaryColor,
-                          controller: _titleController,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 1, // Single line for the title
-                          style: const TextStyle(
-                            fontSize: 18, // Font size for the title
-                            color: kFontColor,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(20), // Curvy corners
-                              borderSide: BorderSide.none, // No visible border
-                            ),
-                            hintText: "Write a title...",
-                            hintStyle: const TextStyle(
-                              color: kHintColor,
-                              fontSize: 16,
-                            ),
-                            filled: true,
-                            fillColor: kAccentColor,
-                          ),
-                        ),
-                      ),
+                    // Size is a percantage of the screens height 0 - 1
+                    customTextField(
+                      context: context,
+                      textController: _titleController,
+                      size: 0.1,
+                      hintText: "Write a title...",
+                      autoFocus: false,
                     ),
                     // Spacing between TextFields
                     const SizedBox(
                       height: 16,
-                    ), // Adjust this for more or less spacing
+                    ),
 
                     // Text TextField
-                    Center(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height *
-                            0.7, // Make this larger
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          color: kAccentColor,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            width: 4.0,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: TextField(
-                          autofocus: true,
-                          showCursor: true,
-                          expands: true,
-                          cursorColor: kPrimaryColor,
-                          controller: _textController,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null, // Multiline for body text
-                          textAlignVertical: TextAlignVertical.top,
-                          style: const TextStyle(
-                            fontSize: 18, // Font size for body text
-                            color: kFontColor,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
-                            ),
-                            hintText: "Write what's on your mind...",
-                            hintStyle: const TextStyle(
-                              color: kHintColor,
-                              fontSize: 16,
-                            ),
-                            filled: true,
-                            fillColor: kAccentColor,
-                          ),
-                        ),
-                      ),
-                    ),
+                    customTextField(
+                      context: context,
+                      textController: _textController,
+                      size: 0.7,
+                      hintText: "Write a note...",
+                      autoFocus: true,
+                    )
                   ],
                 ),
               );

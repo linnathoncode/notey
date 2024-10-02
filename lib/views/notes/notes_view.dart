@@ -31,7 +31,7 @@ class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
   final userId = AuthService.firebase().currentUser!.id;
   final ValueNotifier<bool> _isDeleteMode = ValueNotifier<bool>(false);
-  final List<CloudNote> _trashCan = [];
+  final List<String> _trashCan = [];
 
   @override
   void initState() {
@@ -39,28 +39,25 @@ class _NotesViewState extends State<NotesView> {
     super.initState();
   }
 
-  Future<void> deleteNoteFromDatabase(CloudNote note) async {
+  Future<void> deleteNoteFromDatabase(String id) async {
     try {
-      await _notesService.deleteNote(documentId: note.documentId);
+      await _notesService.deleteNote(documentId: id);
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> _confirmAndDeleteNotes() async {
-    const String dialogContent = "Note will be deleted forever, are you sure?";
+    final numberOfNotes = _trashCan.length;
+    final String dialogContent =
+        "$numberOfNotes ${numberOfNotes == 1 ? "note" : "notes"} will be deleted forever, are you sure?";
     if (!mounted) return;
     final shouldDelete = await showDeleteNoteDialog(context, dialogContent);
     if (shouldDelete) {
-      for (var note in _trashCan) {
-        await deleteNoteFromDatabase(note);
+      for (var (id) in _trashCan) {
+        await deleteNoteFromDatabase(id);
       }
       _clearTrashCan();
-      //you dont have to use set state
-      //if you are using ValueListenerBuilders
-
-      //set state causes the whole widget to be redrawn
-      //setState(() {}); // Refresh the UI
     } else {
       _clearTrashCan();
     }
@@ -69,6 +66,17 @@ class _NotesViewState extends State<NotesView> {
   void _clearTrashCan() {
     _trashCan.clear();
     _isDeleteMode.value = false;
+    setState(() {});
+  }
+
+  void _addOrRemoveToTrashCan(String noteId) {
+    if (_trashCan.contains(noteId)) {
+      _trashCan.remove(noteId);
+    } else {
+      _trashCan.add(noteId);
+    }
+    _isDeleteMode.value = _trashCan.isNotEmpty;
+    setState(() {});
   }
 
   @override
@@ -276,6 +284,9 @@ class _NotesViewState extends State<NotesView> {
 
   Widget _buildListItem(
       CloudNote note, Animation<double> animation, int index) {
+    final isSelected = _trashCan.contains(note.documentId);
+    final fontColor = isSelected ? kAccentColor : kSecondaryColor;
+
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(0.5, 0), // Swipes the right of the screen
@@ -288,33 +299,33 @@ class _NotesViewState extends State<NotesView> {
         ), // Increased padding for shadow
         child: Material(
           shadowColor: kPrimaryColor,
-          elevation: 2.0,
-          color: kAccentColor, // Background color
+          elevation: isSelected ? 4.0 : 2.0,
+          color: isSelected ? kPrimaryColor : kAccentColor, // Background color
           borderRadius: BorderRadius.circular(8),
           child: ListTile(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CreateOrUpdateNoteView(
-                  currentNote: note,
-                ),
-              ),
-            ),
-            trailing: IconButton(
-              color: kSecondaryColor,
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                if (context.mounted) {
-                  deleteNoteFromDatabase(note);
-                }
-              },
-            ),
+            selected: isSelected,
+            onTap: !_isDeleteMode.value
+                ? () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CreateOrUpdateNoteView(
+                          currentNote: note,
+                        ),
+                      ),
+                    );
+                  }
+                : () => _addOrRemoveToTrashCan(note.documentId),
+            onLongPress: () {
+              _addOrRemoveToTrashCan(note.documentId);
+            },
             title: note.title.isNotEmpty
                 ? Text(
                     note.title, // Display the title if it exists
                     maxLines: 1,
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: fontColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -324,7 +335,8 @@ class _NotesViewState extends State<NotesView> {
                     maxLines: 1,
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: fontColor,
                       fontSize: 18,
                       fontWeight: FontWeight.normal,
                     ),
@@ -335,20 +347,30 @@ class _NotesViewState extends State<NotesView> {
                     maxLines: 1,
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: fontColor,
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
                     ),
                   )
                 : null,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: const BorderSide(
-                color: kSecondaryColor,
-                width: 3,
-                style: BorderStyle.none,
-              ),
-            ),
+            shape: isSelected
+                ? RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(
+                      color: kSecondaryColor,
+                      width: 4,
+                      style: BorderStyle.solid,
+                    ),
+                  )
+                : RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(
+                      color: kSecondaryColor,
+                      width: 3,
+                      style: BorderStyle.none,
+                    ),
+                  ),
           ),
         ),
       ),

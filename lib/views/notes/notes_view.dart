@@ -3,6 +3,7 @@ import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
+import 'package:notey/services/cloud/cloud_storage_constants.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
 import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_dialog.dart';
@@ -173,36 +174,76 @@ class _NotesViewState extends State<NotesView> {
           },
         ),
       ),
-      body: StreamBuilder(
-        stream: _notesService.allNotes(ownerUserId: userId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final allNotesIterable = snapshot.data as Iterable<CloudNote>;
-          // Coverting the iterable to a list to work easier with it
-          // then sorting the list by date (recent to least recent)
-          final allNotesInOrder = allNotesIterable.toList()
-            ..sort((a, b) => b.date.compareTo(a.date));
+      body: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: kPrimaryColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(50, 0, 0, 0),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: Offset(0, 2), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: TextButton(
+                  onPressed: () async {
+                    await Navigator.of(context).pushNamed(searchRoute);
+                  },
+                  child: const Text(
+                    "Search Notes",
+                    style: TextStyle(color: kAccentColor, fontSize: 24),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 10,
+              child: StreamBuilder(
+                stream: _notesService.allNotes(ownerUserId: userId),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final allNotesIterable = snapshot.data as Iterable<CloudNote>;
+                  // Coverting the iterable to a list to work easier with it
+                  // then sorting the list by date (recent to least recent)
+                  final allNotesInOrder = allNotesIterable.toList()
+                    ..sort((a, b) => b.date.compareTo(a.date));
 
-          // Handle changes made to the stream
-          _updateList(allNotesInOrder);
+                  // Handle changes made to the stream
+                  _updateList(allNotesInOrder);
 
-          // Return AnimatedList
-          return AnimatedList(
-            key: _listKey,
-            initialItemCount: _list.length,
-            itemBuilder: (context, index, animation) {
-              return _buildListItem(
-                _list[index],
-                animation,
-                index,
-              );
-            },
-          );
-        },
+                  // Return AnimatedList
+                  return AnimatedList(
+                    key: _listKey,
+                    initialItemCount: _list.length,
+                    itemBuilder: (context, index, animation) {
+                      return _buildListItem(
+                        _list[index],
+                        animation,
+                        index,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -285,7 +326,7 @@ class _NotesViewState extends State<NotesView> {
   Widget _buildListItem(
       CloudNote note, Animation<double> animation, int index) {
     final isSelected = _trashCan.contains(note.documentId);
-    final fontColor = isSelected ? kAccentColor : kSecondaryColor;
+    final textColor = isSelected ? kAccentColor : kSecondaryColor;
 
     return SlideTransition(
       position: Tween<Offset>(
@@ -325,7 +366,7 @@ class _NotesViewState extends State<NotesView> {
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: fontColor,
+                      color: textColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -336,7 +377,7 @@ class _NotesViewState extends State<NotesView> {
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: fontColor,
+                      color: textColor,
                       fontSize: 18,
                       fontWeight: FontWeight.normal,
                     ),
@@ -348,7 +389,7 @@ class _NotesViewState extends State<NotesView> {
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: fontColor,
+                      color: textColor,
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
                     ),

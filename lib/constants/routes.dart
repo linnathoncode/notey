@@ -6,3 +6,4 @@ const verifyRoute = '/verify/';
 const homepageRoute = '/homepage/';
 const createOrUpdateNoteRoute = '/notes/create_or_update_note/';
 const testNoteRoute = 'notes/test-note';
+const searchRoute = '/notes/search/';

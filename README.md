@@ -1,4 +1,6 @@
 TODO
 
 - Search Function
-- Caching
+  clean up the search view
+
+* Caching

@@ -19,6 +19,9 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _confirmPassword;
+  late final FocusNode _emailFocus;
+  late final FocusNode _passwordFocus;
+  late final FocusNode _confirmPasswordFocus;
   String errorMessage = '';
 
   final _formKey = GlobalKey<FormState>();
@@ -28,6 +31,9 @@ class _RegisterViewState extends State<RegisterView> {
     _email = TextEditingController();
     _password = TextEditingController();
     _confirmPassword = TextEditingController();
+    _emailFocus = FocusNode();
+    _passwordFocus = FocusNode();
+    _confirmPasswordFocus = FocusNode();
     super.initState();
   }
 
@@ -36,6 +42,9 @@ class _RegisterViewState extends State<RegisterView> {
     _email.dispose();
     _password.dispose();
     _confirmPassword.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
@@ -56,6 +65,9 @@ class _RegisterViewState extends State<RegisterView> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: customTextFormField(
+                  focusNodeOne: _emailFocus,
+                  focusNodeTwo: _passwordFocus,
+                  context: context,
                   obscureText: false,
                   controller: _email,
                   hintText: 'Enter your e-mail',
@@ -66,6 +78,9 @@ class _RegisterViewState extends State<RegisterView> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: customTextFormField(
+                  focusNodeOne: _passwordFocus,
+                  focusNodeTwo: _confirmPasswordFocus,
+                  context: context,
                   obscureText: true,
                   controller: _password,
                   hintText: 'Enter your password',
@@ -88,6 +103,7 @@ class _RegisterViewState extends State<RegisterView> {
                     ],
                   ),
                   child: TextFormField(
+                    focusNode: _confirmPasswordFocus,
                     obscureText: true,
                     obscuringCharacter: "*",
                     enableSuggestions: false,

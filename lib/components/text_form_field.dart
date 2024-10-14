@@ -7,6 +7,9 @@ Widget customTextFormField({
   required TextInputType keyboardType,
   required TextEditingController controller,
   required bool obscureText,
+  required BuildContext context,
+  FocusNode? focusNodeOne,
+  FocusNode? focusNodeTwo,
 }) {
   return Container(
     decoration: BoxDecoration(
@@ -21,6 +24,12 @@ Widget customTextFormField({
       ],
     ),
     child: TextFormField(
+      onFieldSubmitted: (value) {
+        if (context.mounted) {
+          FocusScope.of(context).requestFocus(focusNodeTwo);
+        }
+      },
+      focusNode: focusNodeOne,
       obscureText: obscureText,
       obscuringCharacter: "*",
       enableSuggestions: false,

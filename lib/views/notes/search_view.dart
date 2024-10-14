@@ -64,67 +64,72 @@ class _SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: Expanded(
-              flex: 1,
-              child: Material(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  side: const BorderSide(
-                    color: kSecondaryColor,
-                    width: 2,
-                    style: BorderStyle.solid,
-                  ),
-                ),
-                color: Colors.white,
-                shadowColor: kPrimaryColor,
-                elevation: 5.0,
-                child: TextFormField(
-                  onChanged: filterItems,
-                  obscureText: false,
-                  enableSuggestions: false,
-                  autofocus: true,
-                  autocorrect: false,
-                  keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    errorStyle: TextStyle(color: kErrorColor),
-                    hintText: "Search Notes...",
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
+      appBar: AppBar(
+        backgroundColor: kBackgroundColor,
+      ),
+      body: Container(
+        color: kBackgroundColor,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Expanded(
+                flex: 1,
+                child: Material(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    side: const BorderSide(
+                      color: kSecondaryColor,
+                      width: 2,
+                      style: BorderStyle.solid,
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      borderSide: BorderSide.none,
+                  ),
+                  color: kAccentColor,
+                  shadowColor: kPrimaryColor,
+                  elevation: 5.0,
+                  child: TextFormField(
+                    onChanged: filterItems,
+                    obscureText: false,
+                    enableSuggestions: false,
+                    autofocus: true,
+                    autocorrect: false,
+                    keyboardType: TextInputType.multiline,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      errorStyle: TextStyle(color: kErrorColor),
+                      hintText: "Search Notes...",
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            flex: 12,
-            child: ListView.builder(
-              key: _listKey,
-              itemCount: _filteredNotes.length,
-              itemBuilder: (context, index) {
-                return _buildListItem(
-                  _filteredNotes[index],
-                  null, // No animation required for ListView
-                  index,
-                );
-              },
+            const SizedBox(
+              height: 10,
             ),
-          ),
-        ],
+            Expanded(
+              flex: 12,
+              child: ListView.builder(
+                key: _listKey,
+                itemCount: _filteredNotes.length,
+                itemBuilder: (context, index) {
+                  return _buildListItem(
+                    _filteredNotes[index],
+                    null, // No animation required for ListView
+                    index,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

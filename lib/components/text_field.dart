@@ -4,24 +4,24 @@ import 'package:notey/utilities/colors.dart';
 Widget customTextField({
   required BuildContext context,
   required TextEditingController textController,
-  required double size,
   required String hintText,
-  required bool autoFocus,
+  bool autoFocus = false,
+  FocusNode? focusNode,
 }) {
   return Center(
     child: Container(
-      height: MediaQuery.of(context).size.height * size,
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
         color: kAccentColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(5),
         border: Border.all(
-          width: 4.0,
+          width: 3.0,
+          color: kSecondaryColor,
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: TextField(
         autofocus: autoFocus,
+        focusNode: focusNode,
         showCursor: true,
         expands: true,
         cursorColor: kPrimaryColor,
@@ -35,18 +35,17 @@ Widget customTextField({
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide.none,
-          ),
-          hintText: hintText,
-          hintStyle: const TextStyle(
-            color: kHintColor,
-            fontSize: 16,
-          ),
-          filled: true,
-          fillColor: kAccentColor,
-        ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
+            ),
+            hintText: hintText,
+            hintStyle: const TextStyle(
+              color: kHintColor,
+              fontSize: 16,
+            ),
+            filled: true,
+            fillColor: Colors.white),
       ),
     ),
   );

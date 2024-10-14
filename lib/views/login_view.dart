@@ -19,12 +19,17 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final FocusNode _emailFocus;
+  late final FocusNode _passwordFocus;
   String errorMessage = '';
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _emailFocus = FocusNode();
+    _passwordFocus = FocusNode();
+
     super.initState();
   }
 
@@ -32,6 +37,8 @@ class _LoginViewState extends State<LoginView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
@@ -53,6 +60,9 @@ class _LoginViewState extends State<LoginView> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: customTextFormField(
+                    focusNodeOne: _emailFocus,
+                    focusNodeTwo: _passwordFocus,
+                    context: context,
                     obscureText: false,
                     controller: _email,
                     hintText: 'Enter your e-mail',
@@ -63,6 +73,8 @@ class _LoginViewState extends State<LoginView> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: customTextFormField(
+                      focusNodeOne: _passwordFocus,
+                      context: context,
                       obscureText: true,
                       controller: _password,
                       hintText: 'Enter your password',

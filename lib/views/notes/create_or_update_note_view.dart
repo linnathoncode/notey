@@ -23,6 +23,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   late final TextEditingController _textController;
   late final TextEditingController _titleController;
   late final bool _isUpdateMode;
+
   final ValueNotifier<bool> _isTextNotEmpty = ValueNotifier<bool>(false);
 
   @override
@@ -34,6 +35,14 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     _titleController.addListener(_onTextChanged);
     _textController.addListener(_onTextChanged);
     super.initState();
+  }
+
+  @override
+  void dispose() async {
+    await handleDispose();
+    _textController.dispose();
+    _titleController.dispose();
+    super.dispose();
   }
 
   bool isUpdateMode() {
@@ -85,14 +94,6 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
       await _notesService.updateNote(
           documentId: note.documentId, text: text, title: title);
     }
-  }
-
-  @override
-  void dispose() async {
-    await handleDispose();
-    _textController.dispose();
-    _titleController.dispose();
-    super.dispose();
   }
 
   Future<void> handleDispose() async {
@@ -185,13 +186,16 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                       height: 16,
                     ),
                     // Title TextField
-                    // Size is a percantage of the screens height 0 - 1
-                    customTextField(
-                      context: context,
-                      textController: _titleController,
-                      size: 0.1,
-                      hintText: "Write a title...",
-                      autoFocus: false,
+                    // Size is a percentage of the screen's height 0 - 1
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.1, // 10% of screen height
+                      child: customTextField(
+                        context: context,
+                        textController: _titleController,
+                        hintText: "Write a title...",
+                        autoFocus: false,
+                      ),
                     ),
                     // Spacing between TextFields
                     const SizedBox(
@@ -199,13 +203,16 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                     ),
 
                     // Text TextField
-                    customTextField(
-                      context: context,
-                      textController: _textController,
-                      size: 0.7,
-                      hintText: "Write a note...",
-                      autoFocus: true,
-                    )
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.7, // 7     0% of screen height
+                      child: customTextField(
+                        context: context,
+                        textController: _textController,
+                        hintText: "Write a note...",
+                        autoFocus: true,
+                      ),
+                    ),
                   ],
                 ),
               );

@@ -3,7 +3,6 @@ import 'package:notey/constants/routes.dart';
 import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
-import 'package:notey/services/cloud/cloud_storage_constants.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
 import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_dialog.dart';
@@ -97,7 +96,11 @@ class _NotesViewState extends State<NotesView> {
                       },
                       icon: const Icon(Icons.cancel),
                     )
-                  : null,
+                  : IconButton(
+                      onPressed: () async {
+                        await Navigator.of(context).pushNamed(searchRoute);
+                      },
+                      icon: const Icon(Icons.search)),
               actions: isDeleteMode
                   ? [
                       IconButton(
@@ -178,36 +181,6 @@ class _NotesViewState extends State<NotesView> {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                  color: kPrimaryColor,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromARGB(50, 0, 0, 0),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0, 2), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: TextButton(
-                  onPressed: () async {
-                    await Navigator.of(context).pushNamed(searchRoute);
-                  },
-                  child: const Text(
-                    "Search Notes",
-                    style: TextStyle(color: kAccentColor, fontSize: 24),
-                  ),
-                ),
-              ),
-            ),
             Expanded(
               flex: 10,
               child: StreamBuilder(

@@ -4,6 +4,7 @@ import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
 import 'package:notey/utilities/colors.dart';
 import 'package:notey/views/notes/create_or_update_note_view.dart';
+import 'package:highlight_text/highlight_text.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -18,17 +19,31 @@ class _SearchViewState extends State<SearchView> {
 
   List<CloudNote> _filteredNotes = [];
   List<CloudNote> _allNotes = [];
+  Map<String, HighlightedWord> words = {};
 
   final userId = AuthService.firebase().currentUser!.id;
 
   void filterItems(String query) {
     setState(() {
       _filteredNotes = _allNotes
-          .where(
-              (item) => item.text.toLowerCase().contains(query.toLowerCase()))
+          .where((item) =>
+              item.text.toLowerCase().contains(query.toLowerCase()) ||
+              item.title.toLowerCase().contains(query.toLowerCase()))
           .toList();
+      words = filteredWords(query);
     });
+
     // print("FILTERED NOTES! $_filteredNotes");
+  }
+
+  Map<String, HighlightedWord> filteredWords(String query) {
+    return {
+      query: HighlightedWord(
+        onTap: () {},
+        textStyle: const TextStyle(
+            backgroundColor: kPrimaryColor, color: kAccentColor),
+      )
+    };
   }
 
   Future<void> getAllNotes() async {
@@ -52,42 +67,53 @@ class _SearchViewState extends State<SearchView> {
       appBar: AppBar(),
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: kAccentColor,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: const [
-                  BoxShadow(
-                    color: kPrimaryColor,
-                    blurRadius: 5.0,
-                    offset: Offset(0, 2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            child: Expanded(
+              flex: 1,
+              child: Material(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: const BorderSide(
+                    color: kSecondaryColor,
+                    width: 2,
+                    style: BorderStyle.solid,
                   ),
-                ],
-              ),
-              child: TextFormField(
-                onChanged: filterItems,
-                obscureText: false,
-                enableSuggestions: false,
-                autofocus: true,
-                autocorrect: false,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  errorStyle: TextStyle(color: kErrorColor),
-                  hintText: "Search Notes...",
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    borderSide: BorderSide.none,
+                ),
+                color: Colors.white,
+                shadowColor: kPrimaryColor,
+                elevation: 5.0,
+                child: TextFormField(
+                  onChanged: filterItems,
+                  obscureText: false,
+                  enableSuggestions: false,
+                  autofocus: true,
+                  autocorrect: false,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    errorStyle: TextStyle(color: kErrorColor),
+                    hintText: "Search Notes...",
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+          const SizedBox(
+            height: 10,
+          ),
           Expanded(
+            flex: 12,
             child: ListView.builder(
+              key: _listKey,
               itemCount: _filteredNotes.length,
               itemBuilder: (context, index) {
                 return _buildListItem(
@@ -126,35 +152,38 @@ class _SearchViewState extends State<SearchView> {
             );
           },
           title: note.title.isNotEmpty
-              ? Text(
-                  note.title,
+              ? TextHighlight(
+                  text: note.title,
+                  words: words,
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  textStyle: const TextStyle(
                     color: kFontColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 )
-              : Text(
-                  note.text,
+              : TextHighlight(
+                  text: note.text,
+                  words: words,
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  textStyle: const TextStyle(
                     color: kFontColor,
                     fontSize: 18,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
           subtitle: note.title.isNotEmpty
-              ? Text(
-                  note.text,
+              ? TextHighlight(
+                  text: note.text,
+                  words: words,
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  textStyle: const TextStyle(
                     color: kFontColor,
                     fontSize: 12,
                     fontWeight: FontWeight.normal,

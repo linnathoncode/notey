@@ -4,7 +4,6 @@ import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
-import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_dialog.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 // import 'dart:developer' as devtools show log;
@@ -18,7 +17,8 @@ extension Count<T extends Iterable> on Stream<T> {
 }
 
 class NotesView extends StatefulWidget {
-  const NotesView({super.key});
+  final ValueChanged<bool> onThemeChanged;
+  const NotesView({super.key, required this.onThemeChanged});
 
   @override
   State<NotesView> createState() => _NotesViewState();
@@ -32,6 +32,7 @@ class _NotesViewState extends State<NotesView> {
   final userId = AuthService.firebase().currentUser!.id;
   final ValueNotifier<bool> _isDeleteMode = ValueNotifier<bool>(false);
   final List<String> _trashCan = [];
+  final FocusNode _searchFocus = FocusNode();
 
   @override
   void initState() {
@@ -97,10 +98,10 @@ class _NotesViewState extends State<NotesView> {
                       icon: const Icon(Icons.cancel),
                     )
                   : IconButton(
-                      onPressed: () async {
-                        await Navigator.of(context).pushNamed(searchRoute);
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
                       },
-                      icon: const Icon(Icons.search)),
+                      icon: const Icon(Icons.menu)),
               actions: isDeleteMode
                   ? [
                       IconButton(
@@ -111,7 +112,9 @@ class _NotesViewState extends State<NotesView> {
                   : [
                       PopupMenuButton<MenuAction>(
                         offset: const Offset(50, 40),
-                        color: kSecondaryColor, // Background color for the menu
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary, // Background color for the menu
                         onSelected: (value) async {
                           switch (value) {
                             case MenuAction.logout:
@@ -142,23 +145,25 @@ class _NotesViewState extends State<NotesView> {
                         },
                         itemBuilder: (context) {
                           return [
-                            const PopupMenuItem<MenuAction>(
+                            PopupMenuItem<MenuAction>(
                               value: MenuAction.logout,
                               child: Text(
                                 "Log out",
                                 style: TextStyle(
-                                  color:
-                                      kAccentColor, // Text color for the menu item
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .tertiary, // Text color for the menu item
                                 ),
                               ),
                             ),
-                            const PopupMenuItem<MenuAction>(
+                            PopupMenuItem<MenuAction>(
                               value: MenuAction.devmenu,
                               child: Text(
                                 "Dev Menu",
                                 style: TextStyle(
-                                  color:
-                                      kAccentColor, // Text color for the menu item
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .tertiary, // Text color for the menu item
                                 ),
                               ),
                             ),
@@ -171,18 +176,63 @@ class _NotesViewState extends State<NotesView> {
                 style:
                     const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-              backgroundColor: isDeleteMode ? kSecondaryColor : kPrimaryColor,
-              foregroundColor: isDeleteMode ? kPrimaryColor : kAccentColor,
+              backgroundColor: isDeleteMode
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.primary,
+              foregroundColor: isDeleteMode
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.tertiary,
             );
           },
         ),
+      ),
+      drawer: Drawer(
+        child: IconButton(
+            onPressed: () => widget.onThemeChanged(
+                Theme.of(context).brightness == Brightness.light),
+            icon: const Icon(Icons.dark_mode)),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
             Expanded(
-              flex: 10,
+              flex: 1,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1.5,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        autofocus: false,
+                        decoration: const InputDecoration(
+                          hintText: 'Search notes',
+                          border: InputBorder.none,
+                        ),
+                        onTap: () {
+                          _searchFocus.unfocus();
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          Navigator.of(context).pushNamed(searchRoute);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 20,
               child: StreamBuilder(
                 stream: _notesService.allNotes(ownerUserId: userId),
                 builder: (context, snapshot) {
@@ -222,14 +272,14 @@ class _NotesViewState extends State<NotesView> {
         onPressed: () async {
           await Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
         },
-        backgroundColor: kPrimaryColor,
-        foregroundColor: kAccentColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.tertiary,
         child: const Icon(
           Icons.add,
           size: 35,
         ),
       ),
-      backgroundColor: kBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 
@@ -299,7 +349,9 @@ class _NotesViewState extends State<NotesView> {
   Widget _buildListItem(
       CloudNote note, Animation<double> animation, int index) {
     final isSelected = _trashCan.contains(note.documentId);
-    final textColor = isSelected ? kAccentColor : kSecondaryColor;
+    final textColor = isSelected
+        ? Theme.of(context).colorScheme.tertiary
+        : Theme.of(context).colorScheme.secondary;
 
     return SlideTransition(
       position: Tween<Offset>(
@@ -312,9 +364,11 @@ class _NotesViewState extends State<NotesView> {
           vertical: 6,
         ), // Increased padding for shadow
         child: Material(
-          shadowColor: kPrimaryColor,
+          shadowColor: Theme.of(context).colorScheme.primary,
           elevation: isSelected ? 4.0 : 2.0,
-          color: isSelected ? kPrimaryColor : kAccentColor, // Background color
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.tertiary, // Background color
           borderRadius: BorderRadius.circular(8),
           child: ListTile(
             selected: isSelected,
@@ -371,16 +425,16 @@ class _NotesViewState extends State<NotesView> {
             shape: isSelected
                 ? RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    side: const BorderSide(
-                      color: kSecondaryColor,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
                       width: 4,
                       style: BorderStyle.solid,
                     ),
                   )
                 : RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    side: const BorderSide(
-                      color: kSecondaryColor,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
                       width: 3,
                       style: BorderStyle.none,
                     ),

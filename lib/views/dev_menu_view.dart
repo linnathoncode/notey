@@ -19,6 +19,7 @@ class DevMenuView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: customButton(
+                context: context,
                 buttonText: 'Notes View',
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -31,6 +32,7 @@ class DevMenuView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: customButton(
+                context: context,
                 buttonText: 'Login View',
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -43,6 +45,7 @@ class DevMenuView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: customButton(
+                context: context,
                 buttonText: 'Register View',
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -55,6 +58,7 @@ class DevMenuView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: customButton(
+                context: context,
                 buttonText: 'Verify Email View',
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -67,6 +71,7 @@ class DevMenuView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: customButton(
+                context: context,
                 buttonText: 'New Note View',
                 onPressed: () {
                   Navigator.of(context).pushNamed(

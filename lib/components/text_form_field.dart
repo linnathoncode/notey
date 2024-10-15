@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notey/utilities/colors.dart';
 
 Widget customTextFormField({
   required String hintText,
@@ -13,13 +12,13 @@ Widget customTextFormField({
 }) {
   return Container(
     decoration: BoxDecoration(
-      color: kAccentColor,
+      color: Theme.of(context).colorScheme.tertiary,
       borderRadius: BorderRadius.circular(5),
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
-          color: kPrimaryColor,
+          color: Theme.of(context).colorScheme.primary,
           blurRadius: 5.0,
-          offset: Offset(0, 2),
+          offset: const Offset(0, 2),
         ),
       ],
     ),
@@ -38,7 +37,7 @@ Widget customTextFormField({
       keyboardType: keyboardType,
       controller: controller,
       decoration: InputDecoration(
-        errorStyle: const TextStyle(color: kErrorColor),
+        errorStyle: TextStyle(color: Theme.of(context).colorScheme.error),
         hintText: hintText,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20),
         border: const OutlineInputBorder(

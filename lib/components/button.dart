@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:notey/utilities/colors.dart';
 
 Widget customButton({
   required String buttonText, // Pass the button text as a parameter
-  required VoidCallback onPressed, // Pass the onPressed function as a parameter
+  required VoidCallback onPressed,
+  required BuildContext context, // Pass the onPressed function as a parameter
 }) {
   return Container(
     decoration: BoxDecoration(
-      color: kAccentColor,
+      color: Theme.of(context).colorScheme.tertiary,
       borderRadius: BorderRadius.circular(5),
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
-          color: kAccentColor,
+          color: Theme.of(context).colorScheme.tertiary,
           blurRadius: 5.0,
-          offset: Offset(0, 2),
+          offset: const Offset(0, 2),
         ),
       ],
     ),
@@ -23,8 +23,8 @@ Widget customButton({
         children: <Widget>[
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
-                color: kPrimaryColor,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -32,7 +32,7 @@ Widget customButton({
             onPressed: onPressed, // Use the passed onPressed function
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-              foregroundColor: kAccentColor,
+              foregroundColor: Theme.of(context).colorScheme.tertiary,
               textStyle:
                   const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),

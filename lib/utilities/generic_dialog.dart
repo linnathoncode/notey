@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notey/utilities/colors.dart';
 
 typedef DialogOptionBuilder<T> = Map<String, T> Function();
 
@@ -17,19 +16,27 @@ Future<T?> showGenericDialog<T>({
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0), // Rounded corners
         ),
-        backgroundColor: kBackgroundColor, // Background color for the dialog
+        backgroundColor: Theme.of(context)
+            .colorScheme
+            .surface, // Background color for the dialog
         title: Text(
           title,
-          style: const TextStyle(
-            color: kFontColor, // Custom title color
+          style: TextStyle(
+            color: Theme.of(context)
+                .textTheme
+                .displayLarge
+                ?.color, // Custom title color
             fontWeight: FontWeight.bold, // Bold title
             fontSize: 18, // Larger font size for title
           ),
         ),
         content: Text(
           content,
-          style: const TextStyle(
-            color: kFontColor, // Custom content text color
+          style: TextStyle(
+            color: Theme.of(context)
+                .textTheme
+                .displayLarge
+                ?.color, // Custom content text color
             fontSize: 16, // Custom font size for content
           ),
         ),
@@ -37,8 +44,12 @@ Future<T?> showGenericDialog<T>({
           final value = options[optionTitle];
           return TextButton(
             style: TextButton.styleFrom(
-              foregroundColor: kPrimaryColor, // Text color for button
-              backgroundColor: kBackgroundColor, // Button background color
+              foregroundColor: Theme.of(context)
+                  .colorScheme
+                  .primary, // Text color for button
+              backgroundColor: Theme.of(context)
+                  .colorScheme
+                  .surface, // Button background color
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0), // Padding for button
               shape: RoundedRectangleBorder(

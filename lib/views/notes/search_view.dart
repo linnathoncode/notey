@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
-import 'package:notey/utilities/colors.dart';
 import 'package:notey/views/notes/create_or_update_note_view.dart';
 import 'package:highlight_text/highlight_text.dart';
 
@@ -40,8 +39,10 @@ class _SearchViewState extends State<SearchView> {
     return {
       query: HighlightedWord(
         onTap: () {},
-        textStyle: const TextStyle(
-            backgroundColor: kPrimaryColor, color: kAccentColor),
+        textStyle: TextStyle(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.tertiary,
+        ),
       )
     };
   }
@@ -65,10 +66,10 @@ class _SearchViewState extends State<SearchView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: kBackgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: Container(
-        color: kBackgroundColor,
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
             Padding(
@@ -78,14 +79,14 @@ class _SearchViewState extends State<SearchView> {
                 child: Material(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
-                    side: const BorderSide(
-                      color: kSecondaryColor,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
                       width: 2,
                       style: BorderStyle.solid,
                     ),
                   ),
-                  color: kAccentColor,
-                  shadowColor: kPrimaryColor,
+                  color: Theme.of(context).colorScheme.tertiary,
+                  shadowColor: Theme.of(context).colorScheme.primary,
                   elevation: 5.0,
                   child: TextFormField(
                     onChanged: filterItems,
@@ -94,15 +95,16 @@ class _SearchViewState extends State<SearchView> {
                     autofocus: true,
                     autocorrect: false,
                     keyboardType: TextInputType.multiline,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      errorStyle: TextStyle(color: kErrorColor),
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      errorStyle:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
                       hintText: "Search Notes...",
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 6,
                       ),
-                      border: OutlineInputBorder(
+                      border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         borderSide: BorderSide.none,
                       ),
@@ -142,9 +144,9 @@ class _SearchViewState extends State<SearchView> {
         vertical: 6,
       ),
       child: Material(
-        shadowColor: kPrimaryColor,
+        shadowColor: Theme.of(context).colorScheme.primary,
         elevation: 2.0,
-        color: kAccentColor,
+        color: Theme.of(context).colorScheme.tertiary,
         borderRadius: BorderRadius.circular(8),
         child: ListTile(
           onTap: () {
@@ -163,8 +165,8 @@ class _SearchViewState extends State<SearchView> {
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
-                  textStyle: const TextStyle(
-                    color: kFontColor,
+                  textStyle: TextStyle(
+                    color: Theme.of(context).textTheme.displayLarge?.color,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -175,8 +177,8 @@ class _SearchViewState extends State<SearchView> {
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
-                  textStyle: const TextStyle(
-                    color: kFontColor,
+                  textStyle: TextStyle(
+                    color: Theme.of(context).textTheme.displayLarge?.color,
                     fontSize: 18,
                     fontWeight: FontWeight.normal,
                   ),
@@ -188,8 +190,8 @@ class _SearchViewState extends State<SearchView> {
                   maxLines: 1,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
-                  textStyle: const TextStyle(
-                    color: kFontColor,
+                  textStyle: TextStyle(
+                    color: Theme.of(context).textTheme.displayLarge?.color,
                     fontSize: 12,
                     fontWeight: FontWeight.normal,
                   ),
@@ -197,8 +199,8 @@ class _SearchViewState extends State<SearchView> {
               : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(
-              color: kSecondaryColor,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.secondary,
               width: 3,
               style: BorderStyle.none,
             ),

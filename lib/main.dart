@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_service.dart';
-import 'package:notey/utilities/colors.dart';
+import 'package:notey/themes/dark_theme.dart';
+import 'package:notey/themes/light_theme.dart';
 import 'package:notey/views/dev_menu_view.dart';
 import 'package:notey/views/login_view.dart';
 import 'package:notey/views/notes/create_or_update_note_view.dart';
@@ -13,35 +14,65 @@ import 'package:notey/views/verify_email_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Notey',
-      theme: ThemeData(
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: kPrimaryColor, // Cursor color
-          selectionColor:
-              kPrimaryColor.withOpacity(0.5), // Highlight selection color
-          selectionHandleColor: kPrimaryColor, // Drag handle color
-        ),
-      ),
-      home: const HomePage(),
-      routes: {
-        loginRoute: (context) => const LoginView(),
-        registerRoute: (context) => const RegisterView(),
-        notesRoute: (context) => const NotesView(),
-        devmenuRoute: (context) => const DevMenuView(),
-        verifyRoute: (context) => const VerifyEmailView(),
-        homepageRoute: (context) => const HomePage(),
-        createOrUpdateNoteRoute: (context) => const CreateOrUpdateNoteView(),
-        searchRoute: (context) => const SearchView(),
-      },
-    ),
+    const MyApp(),
   );
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  // Track the theme mode (light, dark, system)
+  ThemeMode _themeMode = ThemeMode.light;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Notey',
+      themeMode: _themeMode,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: HomeScreen(
+        onThemeChanged: _toggleTheme,
+      ),
+      routes: {
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute: (context) => NotesView(
+              onThemeChanged: _toggleTheme,
+            ),
+        devmenuRoute: (context) => const DevMenuView(),
+        verifyRoute: (context) => const VerifyEmailView(),
+        homepageRoute: (context) => HomeScreen(
+              onThemeChanged: _toggleTheme,
+            ),
+        createOrUpdateNoteRoute: (context) => const CreateOrUpdateNoteView(),
+        searchRoute: (context) => const SearchView(),
+      },
+    );
+  }
+
+  // Toggle between light and dark modes
+  void _toggleTheme(bool isDarkMode) {
+    setState(() {
+      _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  final ValueChanged<bool> onThemeChanged;
+  const HomeScreen({super.key, required this.onThemeChanged});
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -53,7 +84,9 @@ class HomePage extends StatelessWidget {
 
             if (user != null) {
               if (user.isEmailVerified) {
-                return const NotesView();
+                return NotesView(
+                  onThemeChanged: widget.onThemeChanged,
+                );
               } else {
                 return const VerifyEmailView();
               }

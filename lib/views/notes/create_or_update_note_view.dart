@@ -3,7 +3,6 @@ import 'package:notey/components/text_field.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
-import 'package:notey/utilities/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'dart:developer' as devtools show log;
@@ -38,8 +37,8 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   }
 
   @override
-  void dispose() async {
-    await handleDispose();
+  void dispose() {
+    handleDispose(); //fire and forget
     _textController.dispose();
     _titleController.dispose();
     super.dispose();
@@ -138,8 +137,8 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     devtools.log(_isUpdateMode.toString());
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
-        foregroundColor: kAccentColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.tertiary,
         title: _isUpdateMode
             ? const Text(
                 "Update Note",
@@ -157,7 +156,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
               return IconButton(
                 icon: const Icon(Icons.check),
                 color: Colors.white,
-                disabledColor: kDisabledColor,
+                disabledColor: Theme.of(context).disabledColor,
                 onPressed: isTextNotEmpty
                     ? () {
                         _saveAndExit();

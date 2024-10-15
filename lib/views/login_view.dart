@@ -4,7 +4,6 @@ import 'package:notey/components/text_form_field.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_exceptions.dart';
 import 'package:notey/services/auth/auth_service.dart';
-import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 import 'dart:developer' as devtools show log;
 
@@ -47,8 +46,8 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Login')),
-        backgroundColor: kPrimaryColor,
-        foregroundColor: kAccentColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.tertiary,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -85,6 +84,7 @@ class _LoginViewState extends State<LoginView> {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: customButton(
+                    context: context,
                     buttonText: "Login",
                     onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
@@ -147,16 +147,17 @@ class _LoginViewState extends State<LoginView> {
                         (route) => false,
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Not registered yet?',
-                      style: TextStyle(color: kSecondaryColor),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     )),
               ],
             ),
           ),
         ),
       ),
-      backgroundColor: kBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:notey/components/button.dart';
 import 'package:notey/constants/routes.dart';
 import 'package:notey/services/auth/auth_service.dart';
-import 'package:notey/utilities/colors.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 
 class VerifyEmailView extends StatefulWidget {
@@ -53,21 +52,21 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         title: const Center(
           child: Text('Verify email'),
         ),
-        backgroundColor: kPrimaryColor,
-        foregroundColor: kAccentColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.tertiary,
       ),
       body: Center(
         child: Column(
           children: [
             const SizedBox(height: 30),
             Image.asset('assets/email.webp', height: 250),
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
               child: Center(
                 child: Text(
                   'Verify your email address',
                   style: TextStyle(
-                    color: kFontColor,
+                    color: Theme.of(context).textTheme.displayLarge?.color,
                     fontSize: 28,
                     fontWeight: FontWeight.w600,
                   ),
@@ -78,6 +77,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             Padding(
               padding: const EdgeInsets.all(8),
               child: customButton(
+                context: context,
                 buttonText: 'Send email verification!',
                 onPressed: () async {
                   await AuthService.firebase().sendEmailVerification();

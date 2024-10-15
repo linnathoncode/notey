@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notey/utilities/colors.dart';
 
 Widget customTextField({
   required BuildContext context,
@@ -8,44 +7,52 @@ Widget customTextField({
   bool autoFocus = false,
   FocusNode? focusNode,
 }) {
+  final theme = Theme.of(context);
+
   return Center(
     child: Container(
       decoration: BoxDecoration(
-        color: kAccentColor,
-        borderRadius: BorderRadius.circular(5),
+        color: theme.colorScheme.surface, // Use theme color for surface
+        borderRadius: BorderRadius.circular(12), // Smoother corner radius
         border: Border.all(
-          width: 3.0,
-          color: kSecondaryColor,
+          width: 2.0, // Thinner border for a sleek look
+          color: theme.colorScheme.onSurface
+              .withOpacity(0.1), // Softer border color
         ),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 16, vertical: 8), // Add padding
       child: TextField(
         autofocus: autoFocus,
         focusNode: focusNode,
         showCursor: true,
         expands: true,
-        cursorColor: kPrimaryColor,
+        cursorColor: theme.colorScheme.primary,
         controller: textController,
         keyboardType: TextInputType.multiline,
-        maxLines: null, // Multiline for body text
+        maxLines: null, // Allows multiline input
         textAlignVertical: TextAlignVertical.top,
-        style: const TextStyle(
-          fontSize: 18, // Font size for body text
-          color: kFontColor,
+        style: TextStyle(
+          fontSize: 18,
+          color: theme.textTheme.bodyLarge?.color, // Use adaptive text color
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            hintText: hintText,
-            hintStyle: const TextStyle(
-              color: kHintColor,
-              fontSize: 16,
-            ),
-            filled: true,
-            fillColor: Colors.white),
+          contentPadding: const EdgeInsets.all(16), // Internal padding
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none, // Remove default borders
+          ),
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: theme.hintColor, // Adaptive hint text color
+            fontSize: 16,
+          ),
+          filled: true,
+          fillColor:
+              theme.colorScheme.surface.withOpacity(0.05), // Subtle fill color
+        ),
       ),
     ),
   );

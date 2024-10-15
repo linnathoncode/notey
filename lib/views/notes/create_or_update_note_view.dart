@@ -155,7 +155,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
               // add functionality
               return IconButton(
                 icon: const Icon(Icons.check),
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.tertiary,
                 disabledColor: Theme.of(context).disabledColor,
                 onPressed: isTextNotEmpty
                     ? () {

@@ -178,14 +178,12 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
               // MAKE CUSTOM TEXTFIELD
               return SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.start, // Aligns items at the top
+                  mainAxisSize:
+                      MainAxisSize.min, // Adjusts to the height of its children
                   children: [
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 16),
+
                     // Title TextField
-                    // Size is a percentage of the screen's height 0 - 1
                     SizedBox(
                       height: MediaQuery.of(context).size.height *
                           0.1, // 10% of screen height
@@ -196,15 +194,13 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                         autoFocus: false,
                       ),
                     ),
-                    // Spacing between TextFields
-                    const SizedBox(
-                      height: 16,
-                    ),
+
+                    const SizedBox(height: 16),
 
                     // Text TextField
                     SizedBox(
                       height: MediaQuery.of(context).size.height *
-                          0.7, // 7     0% of screen height
+                          0.7, // 70% of screen height
                       child: customTextField(
                         context: context,
                         textController: _textController,

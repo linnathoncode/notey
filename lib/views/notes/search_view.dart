@@ -31,8 +31,6 @@ class _SearchViewState extends State<SearchView> {
           .toList();
       words = filteredWords(query);
     });
-
-    // print("FILTERED NOTES! $_filteredNotes");
   }
 
   Map<String, HighlightedWord> filteredWords(String query) {
@@ -74,50 +72,44 @@ class _SearchViewState extends State<SearchView> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              child: Expanded(
-                flex: 1,
-                child: Material(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.secondary,
-                      width: 2,
-                      style: BorderStyle.solid,
-                    ),
+              child: Material(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 2,
+                    style: BorderStyle.solid,
                   ),
-                  color: Theme.of(context).colorScheme.tertiary,
-                  shadowColor: Theme.of(context).colorScheme.primary,
-                  elevation: 5.0,
-                  child: TextFormField(
-                    onChanged: filterItems,
-                    obscureText: false,
-                    enableSuggestions: false,
-                    autofocus: true,
-                    autocorrect: false,
-                    keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search),
-                      errorStyle:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
-                      hintText: "Search Notes...",
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        borderSide: BorderSide.none,
-                      ),
+                ),
+                color: Theme.of(context).colorScheme.tertiary,
+                shadowColor: Theme.of(context).colorScheme.primary,
+                elevation: 5.0,
+                child: TextFormField(
+                  onChanged: filterItems,
+                  obscureText: false,
+                  enableSuggestions: false,
+                  autofocus: true,
+                  autocorrect: false,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    errorStyle:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
+                    hintText: "Search Notes...",
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderSide: BorderSide.none,
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Expanded(
-              flex: 12,
               child: ListView.builder(
                 key: _listKey,
                 itemCount: _filteredNotes.length,

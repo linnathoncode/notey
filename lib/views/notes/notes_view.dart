@@ -4,11 +4,13 @@ import 'package:notey/enums/menu_action.dart';
 import 'package:notey/services/auth/auth_service.dart';
 import 'package:notey/services/cloud/cloud_note.dart';
 import 'package:notey/services/cloud/firebase_cloud_storage.dart';
+import 'package:notey/services/theme/theme_provider.dart';
 import 'package:notey/utilities/show_dialog.dart';
 import 'package:notey/utilities/show_snack_bar.dart';
 // import 'dart:developer' as devtools show log;
 
 import 'package:notey/views/notes/create_or_update_note_view.dart';
+import 'package:provider/provider.dart';
 
 // import 'package:notey/views/notes/notes_card_view.dart';
 
@@ -17,8 +19,9 @@ extension Count<T extends Iterable> on Stream<T> {
 }
 
 class NotesView extends StatefulWidget {
-  final ValueChanged<bool> onThemeChanged;
-  const NotesView({super.key, required this.onThemeChanged});
+  const NotesView({
+    super.key,
+  });
 
   @override
   State<NotesView> createState() => _NotesViewState();
@@ -82,6 +85,7 @@ class _NotesViewState extends State<NotesView> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -187,13 +191,19 @@ class _NotesViewState extends State<NotesView> {
         ),
       ),
       drawer: Drawer(
-        child: IconButton(
-            onPressed: () => widget.onThemeChanged(
-                Theme.of(context).brightness == Brightness.light),
-            icon: const Icon(Icons.dark_mode)),
-      ),
+          child: IconButton(
+        onPressed: () {
+          bool isCurrentlyDark = themeProvider.themeMode == ThemeMode.dark;
+          themeProvider.toggleTheme(!isCurrentlyDark);
+        },
+        icon: Icon(
+          themeProvider.themeMode == ThemeMode.dark
+              ? Icons.light_mode
+              : Icons.dark_mode,
+        ),
+      )),
       body: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           children: [
             Expanded(

@@ -118,7 +118,10 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     final text = _textController.text;
     final title = _titleController.text;
     await _notesService.updateNote(
-        documentId: note.documentId, text: text, title: title);
+      documentId: note.documentId,
+      text: text,
+      title: title,
+    );
   }
 
   void _saveAndExit() {

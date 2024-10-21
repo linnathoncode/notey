@@ -112,7 +112,9 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   Future<void> handleDispose() async {
     if (_isUpdateMode) {
       final noteShouldExist = await _deleteNoteIfTextIsEmpty();
-      if (noteShouldExist) {
+      if (noteShouldExist &&
+          (_textController.text != _note?.text ||
+              _titleController.text != _note?.title)) {
         await _saveNoteIfTextNotEmpty();
       }
     } else {
@@ -210,7 +212,7 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                       child: customTextField(
                         context: context,
                         textController: _titleController,
-                        hintText: "Write a title...",
+                        hintText: "Title",
                         autoFocus: false,
                         textSize:
                             Theme.of(context).textTheme.titleLarge?.fontSize,
@@ -222,14 +224,15 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                     // Text TextField
                     SizedBox(
                       height: MediaQuery.of(context).size.height *
-                          0.7, // 70% of screen height
+                          0.75, // 70% of screen height
                       child: customTextField(
                         context: context,
                         textController: _textController,
-                        hintText: "Write a note...",
+                        hintText: "Type here...",
                         textSize:
                             Theme.of(context).textTheme.displayLarge?.fontSize,
                         focusNode: _textFocusNode,
+                        autoFocus: _isUpdateMode ? false : true,
                         maxLines: null,
                       ),
                     ),

@@ -13,9 +13,16 @@ Widget customTextField({
 
   return Center(
     child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       padding:
-          const EdgeInsets.symmetric(horizontal: 4, vertical: 0), // Add padding
+          const EdgeInsets.symmetric(horizontal: 4, vertical: 4), // Add padding
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: theme.colorScheme.primary.withOpacity(0.5), // Outline color
+          width: 1.0, // Thin outline
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: TextField(
         autofocus: autoFocus,
         focusNode: focusNode,
@@ -32,7 +39,7 @@ Widget customTextField({
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.all(16), // Internal padding
+          contentPadding: const EdgeInsets.all(12), // Internal padding
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none, // Remove default borders

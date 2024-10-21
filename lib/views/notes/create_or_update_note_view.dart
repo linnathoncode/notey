@@ -24,6 +24,9 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
   late final bool _isUpdateMode;
 
   final ValueNotifier<bool> _isTextNotEmpty = ValueNotifier<bool>(false);
+  late final ScrollController _scrollController;
+  late final FocusNode _textFocusNode;
+  late final FocusNode _titleFocusNode;
 
   @override
   void initState() {
@@ -31,16 +34,27 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     _isUpdateMode = isUpdateMode();
     _textController = TextEditingController();
     _titleController = TextEditingController();
+    _scrollController = ScrollController();
+    _textFocusNode = FocusNode();
+    _titleFocusNode = FocusNode();
+
     _titleController.addListener(_onTextChanged);
     _textController.addListener(_onTextChanged);
+
+    _textFocusNode.addListener(_scrollToFocusedTextField);
+    _titleFocusNode.addListener(_scrollToFocusedTextField);
+
     super.initState();
   }
 
   @override
   void dispose() {
-    handleDispose(); //fire and forget
+    handleDispose();
     _textController.dispose();
     _titleController.dispose();
+    _scrollController.dispose();
+    _textFocusNode.dispose();
+    _titleFocusNode.dispose();
     super.dispose();
   }
 
@@ -130,15 +144,22 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
     }
   }
 
-  // void _onCheckIconPressed() {
-  //   dispose();
-  //   Navigator.of(context).pop();
-  // }
+  // Scroll to the currently focused TextField when keyboard opens
+  void _scrollToFocusedTextField() {
+    if (_textFocusNode.hasFocus) {
+      _scrollController.animateTo(
+        _scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     devtools.log(_isUpdateMode.toString());
     return Scaffold(
+      resizeToAvoidBottomInset: true, // Allow the view to adjust with keyboard
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.tertiary,
@@ -155,7 +176,6 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
           ValueListenableBuilder<bool>(
             valueListenable: _isTextNotEmpty,
             builder: (context, isTextNotEmpty, child) {
-              // add functionality
               return IconButton(
                 icon: const Icon(Icons.check),
                 color: Theme.of(context).colorScheme.tertiary,
@@ -176,16 +196,13 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               _note = snapshot.data as CloudNote;
-              // devtools.log(_note.toString());
 
-              // MAKE CUSTOM TEXTFIELD
               return SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(
                   mainAxisSize:
                       MainAxisSize.min, // Adjusts to the height of its children
                   children: [
-                    const SizedBox(height: 16),
-
                     // Title TextField
                     SizedBox(
                       height: MediaQuery.of(context).size.height *
@@ -195,10 +212,12 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                         textController: _titleController,
                         hintText: "Write a title...",
                         autoFocus: false,
+                        textSize:
+                            Theme.of(context).textTheme.titleLarge?.fontSize,
+                        focusNode: _titleFocusNode,
+                        maxLines: 1,
                       ),
                     ),
-
-                    const SizedBox(height: 16),
 
                     // Text TextField
                     SizedBox(
@@ -208,7 +227,10 @@ class _CreateOrUpdateNoteViewState extends State<CreateOrUpdateNoteView> {
                         context: context,
                         textController: _textController,
                         hintText: "Write a note...",
-                        autoFocus: true,
+                        textSize:
+                            Theme.of(context).textTheme.displayLarge?.fontSize,
+                        focusNode: _textFocusNode,
+                        maxLines: null,
                       ),
                     ),
                   ],

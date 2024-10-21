@@ -4,37 +4,30 @@ Widget customTextField({
   required BuildContext context,
   required TextEditingController textController,
   required String hintText,
+  required double? textSize,
+  required FocusNode? focusNode,
+  dynamic maxLines,
   bool autoFocus = false,
-  FocusNode? focusNode,
 }) {
   final theme = Theme.of(context);
 
   return Center(
     child: Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface, // Use theme color for surface
-        borderRadius: BorderRadius.circular(12), // Smoother corner radius
-        border: Border.all(
-          width: 2.0, // Thinner border for a sleek look
-          color: theme.colorScheme.onSurface
-              .withOpacity(0.1), // Softer border color
-        ),
-      ),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16, vertical: 8), // Add padding
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding:
+          const EdgeInsets.symmetric(horizontal: 4, vertical: 0), // Add padding
       child: TextField(
         autofocus: autoFocus,
         focusNode: focusNode,
         showCursor: true,
-        expands: true,
+        expands: (maxLines == null) ? true : false,
         cursorColor: theme.colorScheme.primary,
         controller: textController,
         keyboardType: TextInputType.multiline,
-        maxLines: null, // Allows multiline input
+        maxLines: maxLines, // Allows multiline input
         textAlignVertical: TextAlignVertical.top,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: textSize,
           color: theme.textTheme.bodyLarge?.color, // Use adaptive text color
           fontWeight: FontWeight.w400,
         ),
@@ -47,7 +40,7 @@ Widget customTextField({
           hintText: hintText,
           hintStyle: TextStyle(
             color: theme.hintColor, // Adaptive hint text color
-            fontSize: 16,
+            fontSize: textSize,
           ),
           filled: true,
           fillColor:
